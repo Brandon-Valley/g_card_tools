@@ -26,6 +26,7 @@ class Skyzone(Store.Store):
 
     
     def __init__(self):
+        
         # required 
         self.name = 'skyzone'
         self.url  = 'https://sztallahassee.cardfoundry.com/giftcards.php?action=card_balance'
@@ -35,7 +36,9 @@ class Skyzone(Store.Store):
         # optional
         self.code_parse_dim_l = ['-', ':', ' | $']
 
-
+        # parent init
+        super(Skyzone, self).__init__()
+    
     def parse_code_str_l(self, code_str_l):
         return self.parse_code_str_l_____code_id_pin_val(code_str_l)
     
@@ -53,14 +56,18 @@ class Skyzone(Store.Store):
         keyboard.press_and_release('enter', .1)
         
         keyboard.press_and_release('ctrl+a', 1)
+        keyboard.press_and_release('ctrl+c', 1)
         
         # wait for value to display
         Store.wait_for_user_action()
-        time.sleep(3)
-        keyboard.press_and_release('ctrl+a', 1)
-        keyboard.press_and_release('ctrl+a', 1)
-#         Store.wait_for_user_action()
-        keyboard.press_and_release('ctrl+c', 1)
+        time.sleep(5)
+        keyboard.send('ctrl+c')
+        
+        
+#         keyboard.press_and_release('ctrl+a', 1)
+#         keyboard.press_and_release('ctrl+a', 1)
+# #         Store.wait_for_user_action()
+#         keyboard.press_and_release('ctrl+c', 1)
 #         keyboard.press_and_release('ctrl+w', .1) # close tab
         keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
@@ -94,8 +101,23 @@ if __name__ == '__main__':
 # #         keyboard.press_and_release('ctrl+w', .1) # close tab
 #         keyboard.press_and_release('alt+tab', .1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #         
+# 
+#         # wait for value to display
+#         Store.wait_for_user_action()
+#         time.sleep(3)
+#         keyboard.press_and_release('ctrl+a', 1)
+#         keyboard.press_and_release('ctrl+a', 1)
+# #         Store.wait_for_user_action()
+#         keyboard.press_and_release('ctrl+c', 1)
+#         keyboard.press_and_release('ctrl+c', 1)
+#         keyboard.press_and_release('ctrl+c', 1)
+# #         keyboard.press_and_release('ctrl+w', .1) # close tab
+#         keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#          
+#         print(Tk().clipboard_get())
 
 #     keyboard.press_and_release('ctrl+a', 1)
     import code_check
     code_check.main()
+
 

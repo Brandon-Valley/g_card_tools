@@ -37,6 +37,7 @@ def main():
     # 
     s = stores.Skyzone()
     s.check_new_codes(code_str_l)
+    print('done')
     # s.parse_codes(clipboard)
     # # print(s.code)
     

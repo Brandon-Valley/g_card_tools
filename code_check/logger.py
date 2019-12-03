@@ -81,6 +81,12 @@ def write2CSV(logDictList, csvPath, headerList = None):
             fieldnames.append(header)
     else:
         fieldnames = headerList
+        
+    # if csvPath points to a file in dirs that dont exist, make the dirs
+    parentDirPath = os.path.dirname(csvPath)
+    if not os.path.exists(parentDirPath):
+        os.makedirs(parentDirPath)
+        
     
     with open(csvPath, 'wt', encoding='utf8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, lineterminator = '\n')

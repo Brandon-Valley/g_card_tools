@@ -37,15 +37,17 @@ def wait_for_user_action():
 
 class Store:
     def __init__(self):      
-        # required 
-        self.name = None
-        self.url  = None
-        
-        # optional
-        self.code_parse_dim_l = None
-        
+        print('in store init')
+#         # required 
+#         self.name = None
+#         self.url  = None
+#          
+#         # optional
+#         self.code_parse_dim_l = None
+         
         # parent
-        self.unused_codes_csv_path = UNUSED_CODE_DIR_PATH + '\\' + name + '__unused_codes.csv'
+        self.unused_codes_csv_path = UNUSED_CODE_DIR_PATH + '\\' + self.name + '__unused_codes.csv'
+        print('in store: ', self.unused_codes_csv_path)#``````````````````````````````````````````````````````````
 
 
 
@@ -57,10 +59,12 @@ class Store:
         code_dl = self.parse_code_str_l(code_str_l)
         
         for code_d in code_dl:
-            open_code_check_url()
-            value_display_str = self.single_code_check(code_d)
-            code_d['real_value'] = self.parse_value_display_str(value_display_str)
-            logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
+#             open_code_check_url()
+#             value_display_str = self.single_code_check(code_d)
+#             code_d['real_value'] = self.parse_value_display_str(value_display_str)
+            code_d['real_value'] = 30.0
+            
+            logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
     def parse_code_str_l_____code_id_pin_val(self, code_str_l):
