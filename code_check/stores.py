@@ -4,6 +4,7 @@
 
 
 import Store
+
 import re
 
 # 6050110010020386261-304480:12 | $25.00
@@ -20,30 +21,21 @@ class Skyzone(Store.Store):
     def __init__(self):
         # required 
         self.name = 'skyzone'
-        self.url = 'https://sztallahassee.cardfoundry.com/giftcards.php?action=card_balance'
+        self.url  = 'https://sztallahassee.cardfoundry.com/giftcards.php?action=card_balance'
         
         # optional
         self.code_parse_dim_l = ['-', ':', ' | $']
-#         
-#         self.code = None
-#         self.pin  = None
-#         self.id   = None
-#         
-        
-    
+
+
     def parse_code_str_l(self, code_str_l):
         return self.parse_code_str_l_____code_id_pin_val(code_str_l)
+    
+    # what to do after url is opened, always do manual work first
+    def single_code_check(self, code_d):
+        Store.wait_for_user_action()
         
         
-#         code_d = {}
-#         for code_str in code_str_l:
-#             split_code_l = Store.multi_dim_split(['-', ':', ' | $'], code_str)
-#             print(split_code_l)
-# # #             s_code_str = code_str.split('-', ':' )
-# #             s_code_str = re.split('-|:| ', code_str).split
-# #             print('s_code_str: ' ,s_code_str )#`````````````````````````````````````````````````````
-# #         
-        
+
 
         
 if __name__ == '__main__':

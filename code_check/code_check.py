@@ -1,6 +1,9 @@
 from tkinter import Tk
 
 import stores
+import Store
+
+import file_system_utils as fsu
 
 def get_code_str_l_from_clipboard():    
     def get_clipboard():
@@ -20,7 +23,7 @@ def get_code_str_l_from_clipboard():
 #     print(cb.split('\n'))
 
 def main():
-    
+    fsu.delete_if_exists(Store.BLANK_FILE_PATH)
     skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
                       '6050110010068394475-95704:630 | $60.00',
                       '6050110010068396936-95704:513 | $53.17']
