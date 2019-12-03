@@ -17,10 +17,11 @@ from tkinter import Tk
 STORE_NAME = Tk().clipboard_get()  
 
 
-chrome_search(STORE_NAME + ' check giftcard balance' )
-chrome_search(STORE_NAME + ' ebay gift card' )
-chrome_search(STORE_NAME + ' number of locations' )
 
+
+chrome_search(STORE_NAME + ' number of "locations"' )
+# chrome_search(STORE_NAME + ' ebay gift card' )
+# chrome_search(STORE_NAME + ' check gift card balance' )
 
 pyperclip.copy(STORE_NAME)
 spam = pyperclip.paste()
