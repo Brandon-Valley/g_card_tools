@@ -20,13 +20,12 @@ def get_code_str_l_from_clipboard():
     return code_str_l
     
     
-#     print(cb.split('\n'))
 
 def main():
     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
-    skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
-                      '6050110010068394475-95704:630 | $60.00',
-                      '6050110010068396936-95704:513 | $53.17']
+    skyzone_code_l = ['6050110010068393855-95704:679 | $30.00']#,
+#                       '6050110010068394475-95704:630 | $60.00',
+#                       '6050110010068396936-95704:513 | $53.17']
     
     code_str_l = skyzone_code_l
     # code_str_l = get_code_str_l_from_clipboard()

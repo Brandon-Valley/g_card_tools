@@ -60,7 +60,8 @@ class Store:
         
         for code_d in code_dl:
             open_code_check_url()
-            self.single_code_check(code_d)
+            value_display_str = self.single_code_check(code_d)
+            real_card_value = self.parse_value_display_str(value_display_str)
 
 
     def parse_code_str_l_____code_id_pin_val(self, code_str_l):
@@ -70,7 +71,7 @@ class Store:
             split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
             code_d = {'code' :       split_code_l[0],
                       'id'   :       split_code_l[1],
-                      'id'   :       split_code_l[2],
+                      'pin'  :       split_code_l[2],
                       'val'  : float(split_code_l[3])}
             code_dl.append(code_d)
         return code_dl            
