@@ -2,10 +2,35 @@ import webbrowser
 from googlesearch import search
 import pyperclip
 import os
+from ctypes import windll
+from tkinter import Tk
+import time
+import keyboard
+
+
 import logger
+# from kivy.core.clipboard.clipboard_gtk3 import clipboard
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
+
+
+def copy_selection():
+    if windll.user32.OpenClipboard(None):
+        windll.user32.EmptyClipboard()
+        windll.user32.CloseClipboard()
+    
+    while(True):
+        print('trying...')
+        try:
+            keyboard.press_and_release('ctrl+a', 1)
+            keyboard.press_and_release('ctrl+c', 1)
+            clipboard = Tk().clipboard_get()
+            return clipboard
+        except:
+            time.sleep(1)
+            pass
+
 
 
 def multi_dim_split(dim_l, str):
@@ -59,10 +84,10 @@ class Store:
         code_dl = self.parse_code_str_l(code_str_l)
         
         for code_d in code_dl:
-#             open_code_check_url()
-#             value_display_str = self.single_code_check(code_d)
-#             code_d['real_value'] = self.parse_value_display_str(value_display_str)
-            code_d['real_value'] = 30.0
+            open_code_check_url()
+            value_display_str = self.single_code_check(code_d)
+            code_d['real_value'] = self.parse_value_display_str(value_display_str)
+#             code_d['real_value'] = 30.0
             
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 

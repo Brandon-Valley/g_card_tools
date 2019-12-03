@@ -56,12 +56,27 @@ class Skyzone(Store.Store):
         keyboard.press_and_release('enter', .1)
         
         keyboard.press_and_release('ctrl+a', 1)
-        keyboard.press_and_release('ctrl+c', 1)
+#         keyboard.press_and_release('ctrl+c', 1)
         
-        # wait for value to display
+# #         c1 = Tk().clipboard_get()
+#         while('$' not in Tk().clipboard_get()):
+#             keyboard.press_and_release('ctrl+a', 1)
+#             keyboard.press_and_release('ctrl+c', 1)
+#             print('fail, still same clipboard')
+        
+#         time.sleep(3)
+#         keyboard.press_and_release('ctrl+a')
+#         keyboard.press_and_release('ctrl+c')
+        
+#         # wait for value to display
         Store.wait_for_user_action()
-        time.sleep(5)
-        keyboard.send('ctrl+c')
+        clipboard = Store.copy_selection()
+#         time.sleep(5)
+#         keyboard.press_and_release('ctrl+c', 1)
+#         
+#         Store.wait_for_user_action()
+#         time.sleep(5)
+#         keyboard.send('ctrl+c')
         
         
 #         keyboard.press_and_release('ctrl+a', 1)
@@ -71,6 +86,7 @@ class Skyzone(Store.Store):
 #         keyboard.press_and_release('ctrl+w', .1) # close tab
         keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
+        return clipboard
         return Tk().clipboard_get()
   
     # parse the string that results from pressing ctrl+a and copying
