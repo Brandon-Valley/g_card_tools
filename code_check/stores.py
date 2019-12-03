@@ -29,6 +29,8 @@ class Skyzone(Store.Store):
         # required 
         self.name = 'skyzone'
         self.url  = 'https://sztallahassee.cardfoundry.com/giftcards.php?action=card_balance'
+        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value']
+
         
         # optional
         self.code_parse_dim_l = ['-', ':', ' | $']
@@ -50,13 +52,17 @@ class Skyzone(Store.Store):
         keyboard.press_and_release('tab', .1)
         keyboard.press_and_release('enter', .1)
         
+        keyboard.press_and_release('ctrl+a', 1)
+        
         # wait for value to display
         Store.wait_for_user_action()
-        time.sleep(0.3)
-        keyboard.press_and_release('ctrl+a', .1)
-        keyboard.press_and_release('ctrl+c', .1)
-        keyboard.press_and_release('ctrl+w', .1) # close tab
-        keyboard.press_and_release('alt+tab', .1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        time.sleep(3)
+        keyboard.press_and_release('ctrl+a', 1)
+        keyboard.press_and_release('ctrl+a', 1)
+#         Store.wait_for_user_action()
+        keyboard.press_and_release('ctrl+c', 1)
+#         keyboard.press_and_release('ctrl+w', .1) # close tab
+        keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
         return Tk().clipboard_get()
   
@@ -78,6 +84,18 @@ class Skyzone(Store.Store):
 
         
 if __name__ == '__main__':
+
+#             # wait for value to display
+#         Store.wait_for_user_action()
+#         time.sleep(1)
+#         keyboard.press_and_release('ctrl+a', .1)
+# #         Store.wait_for_user_action()
+#         keyboard.press_and_release('ctrl+c', .1)
+# #         keyboard.press_and_release('ctrl+w', .1) # close tab
+#         keyboard.press_and_release('alt+tab', .1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#         
+
+#     keyboard.press_and_release('ctrl+a', 1)
     import code_check
     code_check.main()
 
