@@ -1,18 +1,17 @@
-from tkinter import Tk
-
-import Skyzone
 import Store
+import Skyzone
+import Jimmy_Johns
 
 import file_system_utils as fsu
+import clipboard_tools as cb_tools
 
-STORE_L = [Skyzone.Skyzone()]
+
+STORE_L = [Skyzone.Skyzone(),
+           Jimmy_Johns.Jimmy_Johns()]
 
 
 def get_code_str_l_from_clipboard():    
-    def get_clipboard():
-        return(Tk().clipboard_get())
-    
-    cb = get_clipboard()
+    cb = cb_tools.get_clipboard()
     split_cb = cb.split('\n')
     
     code_str_l = []

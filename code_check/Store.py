@@ -8,10 +8,16 @@ import time
 import keyboard
 
 
+
+
 import logger
+import clipboard_tools as cb_tools
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
+
+
+
 
 
 def copy_selection():
@@ -61,7 +67,6 @@ def wait_for_user_action():
 
 class Store:
     def __init__(self):      
-        print('in store init')
 #         # required 
 #         self.name = None
 #         self.url  = None
@@ -71,7 +76,7 @@ class Store:
          
         # parent
         self.unused_codes_csv_path = UNUSED_CODE_DIR_PATH + '\\' + self.name + '__unused_codes.csv'
-        print('in store: ', self.unused_codes_csv_path)#``````````````````````````````````````````````````````````
+#         print('in store: ', self.unused_codes_csv_path)#``````````````````````````````````````````````````````````
 
 
 
@@ -104,8 +109,18 @@ class Store:
                       'real_value'  : None}
             code_dl.append(code_d)
         return code_dl            
-            
-            
+    
+    
+    # defualt for quick checks, puts values in order_l in clip board, 
+    # returns clip board on last user action (user must manually copy value display
+    def single_code_check_____clipboard_method(self, code_d, order_l = ['code', 'id', 'pin']):
+        for str_num, str in enumerate(order_l):
+            cb_tools.copy_to_clipboard(code_d[order_l[str_num]])
+            wait_for_user_action()
+        
+        clipboard = cb_tools.get_clipboard()
+        keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+        return clipboard
 
 if __name__ == '__main__':
     import code_check
