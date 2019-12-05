@@ -1,13 +1,17 @@
 import Store
 import Skyzone
 import Jimmy_Johns
+import Jets_Pizza
+import Mcalisters_Deli
 
 import file_system_utils as fsu
 import clipboard_tools as cb_tools
 
 
 STORE_L = [Skyzone.Skyzone(),
-           Jimmy_Johns.Jimmy_Johns()]
+           Jimmy_Johns.Jimmy_Johns(),
+           Jets_Pizza.Jets_Pizza(),
+           Mcalisters_Deli.Mcalisters_Deli()]
 
 
 def get_code_str_l_from_clipboard():    
@@ -46,6 +50,8 @@ def main():
     
     # check the codes using the store's unique functions
     store.check_new_codes(code_str_l)
+    
+    print('done!')
     
 #     skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
 #                     '6050110010068394475-95704:630 | $60.00',

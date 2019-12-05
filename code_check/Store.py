@@ -13,6 +13,7 @@ import keyboard
 import logger
 import clipboard_tools as cb_tools
 import hotkey_utils as hu
+from humanfriendly.text import split
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
@@ -97,22 +98,43 @@ class Store:
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
-    def parse_code_str_l_____code_id_pin_val(self, code_str_l):
+    def parse_code_str_l_____code_id_pin_val(self, code_str_l, mode_str = 'code_id_pin_val'):
+        code_dl = []
+        for code_str in code_str_l:
+            code_d = {'og_code_str' : code_str,
+                      'real_value'  : None}
+                      
+            split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
+            try:
+                if mode_str == 'code_id_pin_val':
+                    code_d['code']      = split_code_l[0]
+                    code_d['id']        = split_code_l[1]
+                    code_d['pin']       = split_code_l[2]
+                    code_d['adv_value'] = split_code_l[3]
+                    
+                elif mode_str == 'code_val':
+                    code_d['code']      = split_code_l[0]
+                    code_d['adv_value'] = split_code_l[1]
+            except: 
+                raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
+            code_dl.append(code_d)
+        return code_dl     
+    
+    
+    def parse_code_str_l_____code_val(self, code_str_l):
         code_dl = []
         for code_str in code_str_l:
             code_d = {}
             split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
             try:
                 code_d = {'code'        :       split_code_l[0],
-                          'id'          :       split_code_l[1],
-                          'pin'         :       split_code_l[2],
                           'adv_value'   : float(split_code_l[3]),
                           'og_code_str' : code_str,
                           'real_value'  : None}
             except: 
                 raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
             code_dl.append(code_d)
-        return code_dl            
+        return code_dl        
     
     
     # defualt for quick checks, puts values in order_l in clip board, 
