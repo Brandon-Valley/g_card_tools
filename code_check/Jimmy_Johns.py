@@ -35,14 +35,28 @@ class Jimmy_Johns(Store.Store):
     # on the value display screen at the end of single_code_check()
     def parse_value_display_str(self, value_display_str):
         print(value_display_str)
-        split_value_display_str = value_display_str.split('$')
-        return float(split_value_display_str[-1])
+        split_value_display_str = Store.multi_dim_split(['CURRENT BALANCE:\n$', '\nTRANSACTION DETAILS'], value_display_str)
+        print(split_value_display_str)
+#         split_value_display_str = value_display_str.split('$')
+        return float(split_value_display_str[1])
         
         
 
         
 if __name__ == '__main__':
-    import code_check
-    code_check.main()
+#     import code_check
+#     code_check.main()
+#     
+    import clipboard_tools as cb_tools
+    jj = Jimmy_Johns()
+    cb = cb_tools.get_clipboard()
+    print(jj.parse_value_display_str(cb))
+    
+    
+    
+    
+    
+    
+    
 
 
