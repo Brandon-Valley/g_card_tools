@@ -101,12 +101,15 @@ class Store:
         for code_str in code_str_l:
             code_d = {}
             split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
-            code_d = {'code'        :       split_code_l[0],
-                      'id'          :       split_code_l[1],
-                      'pin'         :       split_code_l[2],
-                      'adv_value'   : float(split_code_l[3]),
-                      'og_code_str' : code_str,
-                      'real_value'  : None}
+            try:
+                code_d = {'code'        :       split_code_l[0],
+                          'id'          :       split_code_l[1],
+                          'pin'         :       split_code_l[2],
+                          'adv_value'   : float(split_code_l[3]),
+                          'og_code_str' : code_str,
+                          'real_value'  : None}
+            except: 
+                raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
             code_dl.append(code_d)
         return code_dl            
     

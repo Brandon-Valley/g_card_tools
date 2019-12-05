@@ -24,8 +24,8 @@ def get_code_str_l_from_clipboard():
 
 def get_store_from_user():
     for store_num, store in enumerate(STORE_L):
-        print('    ' , str(store_num + 1) , '.  ' , store.name)
-    input_num = input("Enter the # of the store: ")
+        print('      ' , str(store_num + 1) , '.  ' , store.name)
+    input_num = input("  Enter the # of the store: ")
     return STORE_L[int(input_num) - 1] 
         
     
@@ -36,7 +36,7 @@ def main():
     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
     
     # get store from user 
-    print('codes for the store you select will be copied from your clipboard')
+    print('  Codes for the store you select will be copied from your clipboard')
     store = get_store_from_user()
     
     # get codes from user's clipboard
