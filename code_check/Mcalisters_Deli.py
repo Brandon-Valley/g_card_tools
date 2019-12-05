@@ -24,7 +24,7 @@ class Mcalisters_Deli(Store.Store):
         super(Mcalisters_Deli, self).__init__()
     
     def parse_code_str_l(self, code_str_l):
-        return self.parse_code_str_l_____code_id_pin_val(code_str_l, 'code_val')
+        return self.parse_code_str_l_____default(code_str_l, 'code_val')
     
     # what to do after url is opened
     # always do manual work first
@@ -56,13 +56,17 @@ class Mcalisters_Deli(Store.Store):
 
         
 if __name__ == '__main__':
-#     import code_check
-#     code_check.main()
+    TEST_PARSE_MODE = False
     
-    jj = Mcalisters_Deli()
-    jj.test_parse_value_display_str()
-#     cb = cb_tools.get_clipboard()
-#     print(jj.parse_value_display_str(cb))
+    if TEST_PARSE_MODE:
+        jj = Mcalisters_Deli()
+        jj.test_parse_value_display_str()
+    else:
+        import code_check
+        code_check.main()
+    
+
+
 
     
     

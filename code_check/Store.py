@@ -98,7 +98,7 @@ class Store:
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
-    def parse_code_str_l_____code_id_pin_val(self, code_str_l, mode_str = 'code_id_pin_val'):
+    def parse_code_str_l_____default(self, code_str_l, mode_str = 'code_id_pin_val'):
         code_dl = []
         for code_str in code_str_l:
             code_d = {'og_code_str' : code_str,
@@ -119,22 +119,7 @@ class Store:
                 raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
             code_dl.append(code_d)
         return code_dl     
-    
-    
-    def parse_code_str_l_____code_val(self, code_str_l):
-        code_dl = []
-        for code_str in code_str_l:
-            code_d = {}
-            split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
-            try:
-                code_d = {'code'        :       split_code_l[0],
-                          'adv_value'   : float(split_code_l[3]),
-                          'og_code_str' : code_str,
-                          'real_value'  : None}
-            except: 
-                raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
-            code_dl.append(code_d)
-        return code_dl        
+          
     
     
     # defualt for quick checks, puts values in order_l in clip board, 
