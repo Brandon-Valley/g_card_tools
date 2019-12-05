@@ -36,8 +36,15 @@ def main():
     # clear blank file fro "next" marker if one exists
     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
     
+    # get store from user 
+    print('codes for the store you select will be copied from your clipboard')
     store = get_store_from_user()
-    print(store.name)
+    
+    # get codes from user's clipboard
+    code_str_l = get_code_str_l_from_clipboard()
+    
+    # check the codes using the store's unique functions
+    store.check_new_codes(code_str_l)
     
 #     skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
 #                     '6050110010068394475-95704:630 | $60.00',
