@@ -91,6 +91,24 @@ def get_abs_path_l_of_all_objects_in_dir(in_dir_path):
         
     return path_l
 
+def get_abs_path_l_of_all_object_type_in_dir(in_dir_path, object_type = 'all'):
+    obj_abs_path_l = []
+    object_name_l = get_objects_in_dir(in_dir_path)
+    
+    for object_name in object_name_l:
+        abs_obj_path = in_dir_path + '//' + object_name
+        if object_type   == 'all':
+            obj_abs_path_l.append(abs_obj_path)
+        elif object_type == 'file' and is_file(abs_obj_path):
+            obj_abs_path_l.append(abs_obj_path)
+        elif object_type == 'dir'  and is_dir (abs_obj_path):
+            obj_abs_path_l.append(abs_obj_path)
+    return obj_abs_path_l
+
+            
+
+
+
 """returns oldest first, youngest last"""
 def get_file_paths_in_dir_by_age(dirpath):
     a = [s for s in os.listdir(dirpath)
@@ -102,9 +120,14 @@ def get_file_paths_in_dir_by_age(dirpath):
         abs_path_l.append(dirpath + '/' + rel_path)
     return abs_path_l
 
-
-
-
+# returns in alphabetical order
+def get_names_of_files_in_dir(in_dir_path):
+    file_name_l = []
+    
+    for r, d, f in os.walk(in_dir_path):
+        for file in f:
+            file_name_l.append(file)
+    return file_name_l
 
 """VVVVVVVVVV                                   VVVVVVVVVV"""
 """VVVVVVVVVV  Operate on or move given OBJECT(s)  VVVVVVVVV"""
@@ -260,7 +283,9 @@ def paths_equal(path_1, path_2):
 
  
 if __name__ == '__main__':
-    print(get_parent_dir_from_path("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools\\ptest.py"))
+    print(get_names_of_files_in_dir("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools_big_data"))
+    
+#     print(glob.glob("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools_big_data" + '/*') )# * means all if need specific format then *.csv)
 #     print(paths_equal('ptest.py', "C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools\\ptest.py"))
 #     print(rename_file_overwrite('ptest.py', "C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools\\ptest.py"))
     
@@ -279,6 +304,4 @@ if __name__ == '__main__':
 #     
 #     
 # #     print(get_file_extension(aaa_path))
-
-
 

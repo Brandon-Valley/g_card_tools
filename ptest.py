@@ -1,10 +1,15 @@
-# import keyboard
+import keyboard
+import time
 # 
 # keyboard.press_and_release('tab', 3)
 # 
 # keyboard.write('The quick brown fox jumps over the lazy dog.')
 # 
-# keyboard.add_hotkey('ctrl+shift+a', print, args=('triggered', 'hotkey'))
+
+def func():
+    print('ran func')
+# keyboard.add_hotkey('ctrl+v', print, args=('triggered', 'hotkey'))
+keyboard.add_hotkey('ctrl+v', func)
 # 
 # # Press PAGE UP then PAGE DOWN to type "foobar".
 # keyboard.add_hotkey('page up, page down', lambda: keyboard.write('foobar'))
@@ -22,14 +27,16 @@
 # 
 # # Block forever, like `while True`.
 # keyboard.wait()
+while(True):
+    time.sleep(3)
+    print('waiting...')
 
-
-
-from ctypes import windll
-if windll.user32.OpenClipboard(None):
-    windll.user32.EmptyClipboard()
-    windll.user32.CloseClipboard()
-    
-    
-from tkinter import Tk
-print('' == Tk().clipboard_get())
+# 
+# from ctypes import windll
+# if windll.user32.OpenClipboard(None):
+#     windll.user32.EmptyClipboard()
+#     windll.user32.CloseClipboard()
+#     
+#     
+# from tkinter import Tk
+# print('' == Tk().clipboard_get())
