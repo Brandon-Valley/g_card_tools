@@ -9,7 +9,6 @@ import keyboard
 
 
 import logger
-# from kivy.core.clipboard.clipboard_gtk3 import clipboard
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
