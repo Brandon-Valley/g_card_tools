@@ -12,6 +12,7 @@ import keyboard
 
 import logger
 import clipboard_tools as cb_tools
+import hotkey_utils as hu
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
@@ -117,10 +118,16 @@ class Store:
     # defualt for quick checks, puts values in order_l in clip board, 
     # returns clip board on last user action (user must manually copy value display
     def single_code_check_____clipboard_method(self, code_d, order_l = ['code', 'id', 'pin']):
+        print('in store: code_d: ', code_d)#``````````````````````````````````````````````````````````````````````````````````
         for str_num, str in enumerate(order_l):
+#             print('in store: adding this to clipboard: ', code_d[order_l[str_num]])#``````````````````````````````````````````````````````````````````````````````````
+#             print('in store: clipboard: ', cb_tools.get_clipboard())#``````````````````````````````````````````````````````````````````````````````````
+                                                               
             cb_tools.copy_to_clipboard(code_d[order_l[str_num]])
+#             hu.wait_for_hotkey_to_be_pressed('ctrl+v')
             wait_for_user_action()
-        
+
+#         hu.wait_for_hotkey_to_be_pressed('ctrl+c')
         clipboard = cb_tools.get_clipboard()
         keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
         return clipboard
@@ -130,7 +137,7 @@ if __name__ == '__main__':
     code_check.main()
     
     
-    
+# 6050110010041431467-66276:296 | $25.00
     
     
     

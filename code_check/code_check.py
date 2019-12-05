@@ -35,6 +35,8 @@ def main():
     # clear blank file fro "next" marker if one exists
     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
     
+    print('  Current Clipboard: ')
+    print('       ' + cb_tools.get_clipboard())
     # get store from user 
     print('  Codes for the store you select will be copied from your clipboard')
     store = get_store_from_user()
