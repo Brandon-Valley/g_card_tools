@@ -60,7 +60,7 @@ def func_not_implemented():
 
 def wait_for_user_action():
     while(not os.path.isfile(BLANK_FILE_PATH)):
-        print('waiting...')
+#         print('waiting...')
         pass
     os.remove(BLANK_FILE_PATH)
     
@@ -95,6 +95,7 @@ class Store:
             code_d['real_value'] = self.parse_value_display_str(value_display_str)
 #             code_d['real_value'] = 30.0
             
+#             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
@@ -105,6 +106,7 @@ class Store:
                       'real_value'  : None}
                       
             split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
+#             print('in store, split_code_l: ', split_code_l)#`````````````````````````````````````````````````````````````````
             try:
                 if mode_str == 'code_id_pin_val':
                     code_d['code']      = split_code_l[0]
@@ -125,7 +127,7 @@ class Store:
     # defualt for quick checks, puts values in order_l in clip board, 
     # returns clip board on last user action (user must manually copy value display
     def single_code_check_____clipboard_method(self, code_d, order_l = ['code', 'id', 'pin']):
-        print('in store: code_d: ', code_d)#``````````````````````````````````````````````````````````````````````````````````
+#         print('in store: code_d: ', code_d)#``````````````````````````````````````````````````````````````````````````````````
         for str_num, str in enumerate(order_l):
 #             print('in store: adding this to clipboard: ', code_d[order_l[str_num]])#``````````````````````````````````````````````````````````````````````````````````
 #             print('in store: clipboard: ', cb_tools.get_clipboard())#``````````````````````````````````````````````````````````````````````````````````

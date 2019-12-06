@@ -22,7 +22,7 @@ class Jets_Pizza(Store.Store):
         super(Jets_Pizza, self).__init__()
     
     def parse_code_str_l(self, code_str_l):
-        return self.parse_code_str_l_____code_id_pin_val(code_str_l)
+        return self.parse_code_str_l_____default(code_str_l)
     
     # what to do after url is opened
     # always do manual work first
