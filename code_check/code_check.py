@@ -4,8 +4,11 @@ import Jimmy_Johns
 import Jets_Pizza
 import Mcalisters_Deli
 
-import file_system_utils as fsu
 import clipboard_tools as cb_tools
+
+import sys, os
+sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) # to import from parent dir
+import file_system_utils as fsu
 
 
 STORE_L = [Skyzone.Skyzone(),
