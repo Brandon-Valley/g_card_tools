@@ -96,6 +96,8 @@ class Store:
 #             code_d['real_value'] = 30.0
             
 #             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
+
+            code_d['code'] = code_d['code'] + "'"
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
