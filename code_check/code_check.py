@@ -11,6 +11,8 @@ sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) # to import from parent 
 import file_system_utils as fsu
 
 
+
+
 STORE_L = [Skyzone.Skyzone(),
            Jimmy_Johns.Jimmy_Johns(),
            Jets_Pizza.Jets_Pizza(),
@@ -35,12 +37,29 @@ def get_store_from_user():
     input_num = input("  Enter the # of the store: ")
     return STORE_L[int(input_num) - 1] 
         
-    
+# returns name of store in working csv filename if exists, otherwise returns false
+def get_working_store_name_if_exists():
+#     print('in get_working_store_name')#``````````````````````````````````````````````````````````````````````````````````
+#     working_csv_parent_dir_path = fsu.get_parent_dir_from_path(Store.WORKING_CSV_PARENT_DIR_PATH + '.csv')
+#     
+#     abs_working_csv_parent_dir_path = fsu.get_abs_path_from_rel_path(working_csv_parent_dir_path)
+#     print('abs_working_csv_parent_dir_path: ', abs_working_csv_parent_dir_path)
+#     file_abs_path_l = fsu.get_abs_path_l_of_all_object_type_in_dir(abs_working_csv_parent_dir_path, 'file')
+#     print(file_abs_path_l)
+    file_name_l = fsu.get_dir_content_l(Store.WORKING_CSV_PARENT_DIR_PATH, object_type = 'file', content_type = 'name')
+    print('file_name_l: ', file_name_l)#``````````````````````````````````````````````````````````````````````````````````````````
+    for file_name in file_name_l:
+        if file_name.startswith(Store.WORKING_CSV_FILE_NAME_HEADER):
+            return Store.multi_dim_split([Store.WORKING_CSV_FILE_NAME_HEADER, '.csv'], file_name)[1]
+    return False
     
 
 def main():
     # clear blank file fro "next" marker if one exists
     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
+    
+    working_store_name = get_working_store_name_if_exists()
+    print('working_store_name: ', working_store_name)
     
     print('  Current Clipboard: ')
     print('       ' + cb_tools.get_clipboard())

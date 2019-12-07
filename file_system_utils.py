@@ -32,11 +32,7 @@ def get_size(start_path):
                 total_size += os.path.getsize(fp)
     return total_size
 
-def get_basename_from_path(path):
-    return ntpath.basename(path)
 
-def get_parent_dir_from_path(path):
-    return os.path.dirname(path)
 
 def get_file_extension(in_file_path):
     if not is_file(in_file_path):
@@ -61,6 +57,13 @@ def get_path_to_current_file(file_obj):
 """ VVVVVVVVVV Get info about objects inside GIVEN DIR VVVVVVVVVV"""
 """ VVVVVVVVVV                                         VVVVVVVVVV"""
 
+""" returns names of all file and dirs in dir """
+def get_objects_in_dir(in_dir_path):
+
+    if is_dir(in_dir_path) != True:
+        raise Exception("ERROR:  in_dir_path must point to dir")
+    return os.listdir(in_dir_path)
+
 
 def get_newest_file_path(dir_path):
     list_of_files = glob.glob(dir_path + '/*') # * means all if need specific format then *.csv
@@ -82,16 +85,10 @@ def get_relative_path_of_files_in_dir(dir_path, file_type):
                 path_list.append(os.path.join(r, file))
     return path_list
 
-def get_abs_path_l_of_all_objects_in_dir(in_dir_path):
-    path_l = []
-    object_name_l = get_objects_in_dir(in_dir_path)
-    
-    for object_name in object_name_l:
-        path_l.append(in_dir_path + '//' + object_name)
-        
-    return path_l
+
 
 def get_abs_path_l_of_all_object_type_in_dir(in_dir_path, object_type = 'all'):
+    
     obj_abs_path_l = []
     object_name_l = get_objects_in_dir(in_dir_path)
     
@@ -105,7 +102,50 @@ def get_abs_path_l_of_all_object_type_in_dir(in_dir_path, object_type = 'all'):
             obj_abs_path_l.append(abs_obj_path)
     return obj_abs_path_l
 
+
+
+
+# in_dir_path - can be either abs or relative path
+def get_dir_content_l(in_dir_path, object_type = 'all', content_type = 'abs_path'):
+    if is_dir(in_dir_path) != True and in_dir_path != '':
+        raise Exception("ERROR:  in_dir_path must point to dir")
+    if object_type not in ['all', 'dir', 'file']:
+        raise Exception("ERROR:  Invalid object_type: ", object_type, "  object_type must be one of:  ['all', 'dir', 'file']")
+    if content_type not in ['abs_path', 'rel_path', 'name']:
+        raise Exception("ERROR:  Invalid content_type: ", content_type, "  object_type must be one of:  ['abs_path', 'rel_path', 'name']")
+    
+    abs_in_dir_path = get_abs_path_from_rel_path(in_dir_path)
+    print('in fsu, abs_in_dir_path: ', abs_in_dir_path)#`````````````````````````````````````````````````````````````````````
+    object_name_l = os.listdir(abs_in_dir_path) # list of names of all dirs and files in dir
+    
+    if content_type == 'name' and object_type == 'all':
+        return object_name_l
+    
+    # get header - str that will be added in front of obj name
+    header = '' 
+    if   content_type == 'abs_path':
+        header = abs_in_dir_path + '//' 
+    elif content_type == 'rel_path':
+        raise Exception('ERROR: rel_path option not yet implemented')
+    
+    content_l = []
+    
+    # fill content_l
+    for object_name in object_name_l:
+        if object_type   == 'all':
+            content_l.append(header + object_name)
+        else:
+            abs_obj_path = abs_in_dir_path + '//' + object_name
             
+            if   object_type == 'file' and is_file(abs_obj_path):
+                content_l.append(header + object_name)
+            elif object_type == 'dir'  and is_dir (abs_obj_path):
+                content_l.append(header + object_name)
+
+    return content_l
+
+
+
 
 
 
@@ -217,12 +257,7 @@ def delete_all_dirs_in_dir_if_exists(dir_path):
             except Exception as e:
                 print(e)
     
-""" returns names of all file and dirs in dir """
-def get_objects_in_dir(in_dir_path):
 
-    if is_dir(in_dir_path) != True:
-        raise Exception("ERROR:  in_dir_path must point to dir")
-    return os.listdir(in_dir_path)
 
 
             
@@ -277,13 +312,22 @@ def replace_extension(in_file_path, new_extension):
 def paths_equal(path_1, path_2):
     return os.path.abspath(path_1) == os.path.abspath(path_2)
 
+def get_abs_path_from_rel_path(in_rel_path):
+    return os.path.abspath(in_rel_path)
+    
+def get_basename_from_path(path):
+    return ntpath.basename(path)
+
+def get_parent_dir_from_path(path):
+    return os.path.dirname(path)
     
 """VVVVVVVVVV WORKING VVVVVVVVV"""
 
 
  
 if __name__ == '__main__':
-    print(get_names_of_files_in_dir("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools_big_data"))
+    print(os.path.abspath(""))
+#     print(get_names_of_files_in_dir("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools_big_data"))
     
 #     print(glob.glob("C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools_big_data" + '/*') )# * means all if need specific format then *.csv)
 #     print(paths_equal('ptest.py', "C:\\Users\\Brandon\\Documents\\Personal_Projects\\my_movie_tools\\ptest.py"))

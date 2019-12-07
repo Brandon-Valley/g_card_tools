@@ -7,7 +7,7 @@ from tkinter import Tk
 import time
 import keyboard
 
-
+# https://www.reddit.com/r/excel/comments/4hgoky/how_to_save_csv_file_without_annoying_prompts/
 
 
 import logger
@@ -18,7 +18,8 @@ from humanfriendly.text import split
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
 UNUSED_CODE_DIR_PATH = 'unused_codes'
 
-
+WORKING_CSV_PARENT_DIR_PATH = ''
+WORKING_CSV_FILE_NAME_HEADER = 'working__'
 
 
 
@@ -78,6 +79,8 @@ class Store:
          
         # parent
         self.unused_codes_csv_path = UNUSED_CODE_DIR_PATH + '\\' + self.name + '__unused_codes.csv'
+            
+#         self.working_csv_path = WORKING_CSV_PATH_HEADER + self.name + '.csv'
 #         print('in store: ', self.unused_codes_csv_path)#``````````````````````````````````````````````````````````
 
 
@@ -96,8 +99,9 @@ class Store:
 #             code_d['real_value'] = 30.0
             
 #             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
-
+            
             code_d['code'] = code_d['code'] + "'"
+#             logger.logSingle(code_d, self.working_csv_path, wantBackup = True, headerList = self.csv_header_l)
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
