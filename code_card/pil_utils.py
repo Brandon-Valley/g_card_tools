@@ -323,7 +323,8 @@ def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align =
     col_offset = box_coords[0][1] + in_box_col_offset
     
     background_img.paste(top_img, (col_offset, row_offset))
-    background_img.show()
+    return background_img
+
 
 
 
@@ -369,14 +370,15 @@ if __name__ == '__main__':
 
     
     
-    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png"
+    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode.png"
 #     64fe11
 # 69f3ce
     test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\green_box_jj.png"
     
     save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\pasted.png"
 #     box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
-    box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
+#     box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
+    box_coords = (((97, 51), (97, 320), (200, 51), (200, 320)))
 
     
     print('box_coord dims:  ', get_box_coord_dims(box_coords))
@@ -394,7 +396,9 @@ if __name__ == '__main__':
 #     img.show()
 #  
  
-    paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
+    pasted_img = paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
+    
+    pasted_img.show()
 
 
 
@@ -408,10 +412,10 @@ if __name__ == '__main__':
 #      
 #     img.save(save_img_path)
 #     img.show()
-    
-#     p = get_colored_box_corner_coords(img, '64fe11')
 #     
-#     print(p)
+    p = get_colored_box_corner_coords(img, '64fe11')
+     
+    print(p)
     
     
     
