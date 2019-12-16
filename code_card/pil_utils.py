@@ -48,8 +48,10 @@ def make_solid_color_img(dims, color, out_file_path):
 def invert_colors(img):
     return PIL.ImageOps.invert(img)
 
-
-
+''' shrinks or enlarges img until one of the dims match, keeps aspect ratio '''
+def resize_img_to_fit_dims(img, width, height):
+    img.thumbnail([width, height],Image.ANTIALIAS)
+    return img
 
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 '''                                                                                              '''
@@ -169,6 +171,34 @@ def add_border(img, border, color=0):
         raise RuntimeError('Border is not an integer or tuple!')
 
 
+''' returns row_offset, col_offset needed to paste given img into given dims with given alignment types '''
+def get_align_paste_offset(img, fit_width, fit_height, horz_align = 'centered', vert_align = 'centered'):
+    img_w, img_h = img.size
+    
+    
+    print('in get_align paste offset, img_w, img_h: ', img_w, img_h)#````````````````````````````````````````````````````````````
+    print('in get_align paste offset, fit_w, fit_h: ', fit_width, fit_width)#`````````````````````````````````````````````````````
+    
+    if  horz_align == 'left':
+        col_offset = 0
+    elif horz_align == 'right':
+        col_offset = fit_width - img_w
+    elif horz_align == 'centered':
+        col_offset = (fit_width / 2) - (img_w / 2)
+        
+    if  vert_align == 'top':
+        row_offset = 0
+    elif vert_align == 'bottom':
+        row_offset = fit_height - img_h
+    elif vert_align == 'centered':
+        row_offset = (fit_height / 2) - (img_h / 2)
+        
+    return int(row_offset), int(col_offset)
+
+
+
+
+
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 '''                                                                                              '''
 ''' Complex Tools                                                                                '''
@@ -271,13 +301,29 @@ def get_colored_box_corner_coords(img, box_color):
 #     print(pixel_color_grid)
 
 
-''' resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
+
+
+
+''' returns img after it resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
     box_coords: (top_right, top_left, bottom_right, bottom_left) '''
 def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
+    
+    # resize top img to fit in box coords
     box_width, box_height = get_box_coord_dims(box_coords)
+    resized_top_img = resize_img_to_fit_dims(top_img, box_width, box_height)
+    
+    in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img, box_width, box_height, horz_align = 'centered', vert_align = 'centered')
+#     row_offset, col_offset = get_align_paste_offset(img, img.size[0], img.size[1], horz_align = 'centered', vert_align = 'centered')
+    
+#     print(row_offset, col_offset)
     
     print(box_width, box_height)
     
+    row_offset = box_coords[0][0] + in_box_row_offset
+    col_offset = box_coords[0][1] + in_box_col_offset
+    
+    background_img.paste(top_img, (col_offset, row_offset))
+    background_img.show()
 
 
 
@@ -323,37 +369,48 @@ if __name__ == '__main__':
 
     
     
-    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode.png"
+    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png"
 #     64fe11
 # 69f3ce
     test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\green_box_jj.png"
     
     save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\pasted.png"
-    box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
+#     box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
+    box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
 
-
+    
+    print('box_coord dims:  ', get_box_coord_dims(box_coords))
 
 
     img = open_img(test_img_path)
     barcode_img = open_img(barcode_img_path)
+#     b = resize_img_to_fit_dims(barcode_img, 100, 50)
+#     b.save("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png")
+#     b.show()
+    
+#     print('img dims: ', img.size)
 
+#     img.thumbnail([50,50],Image.ANTIALIAS)
+#     img.show()
+#  
+ 
     paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
 
 
 
 
 
-    
+#     
 #     img = open_img(test_img_path)
 #     barcode_img = open_img(barcode_img_path)
-#     
-#     img.paste(barcode_img, (4,10))
-#     
+#      
+#     img.paste(barcode_img, (0,0))
+#      
 #     img.save(save_img_path)
 #     img.show()
     
-#     p = get_colored_box_corner_coords(img, (105, 243, 206))
-    
+#     p = get_colored_box_corner_coords(img, '64fe11')
+#     
 #     print(p)
     
     
