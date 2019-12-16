@@ -54,13 +54,19 @@ def invert_colors(img):
 '''                                                                                              '''
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 
-def rgb_tup_to_hex(rgb_tup):
-    return '#%02x%02x%02x' % (rgb_tup[0], rgb_tup[1], rgb_tup[2])
+# does not check bounds
+def rgb_tup_to_hex_str(rgb_tup):
+    return '%02x%02x%02x' % (rgb_tup[0], rgb_tup[1], rgb_tup[2])
 
+# does not check bounds
+def rgb_hex_str_to_tup(rgb_hex):
+    return tuple(int(rgb_hex[i:i+2], 16) for i in (0, 2, 4))
 
-
-
-
+''' returns color as rgb_tup wether it is hex str or already rgb_tup '''
+def color_to_rgb_tup(rgb_tup_or_hex_str):
+    if isinstance(rgb_tup_or_hex_str, str):
+        return rgb_hex_str_to_tup(rgb_tup_or_hex_str)
+    return rgb_tup_or_hex_str
 
     
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -82,9 +88,10 @@ def get_pixel_color_grid(input_img):
     for y in range(in_img_h):
         row_l = []
         for x in range(in_img_w):
-            rgb = input_img.getpixel((x,y))
+            rgb = input_img.getpixel((x,y))  #  <--- this is probably not efficient
             row_l.append(rgb)
         pixel_color_grid.append(row_l)
+        
     return pixel_color_grid
 
 
@@ -193,11 +200,89 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 
-# returns the coords of the 4 corners of a box i=or given color
-# returns false if color does not exist in img
+''' returns the coords of the 4 corners of a box of given color
+    returns false if color does not exist in img
+    returns tuple: (top_right, top_left, bottom_right, bottom_left)
+    box_color can be  tup or hex str
+    
+    scans each row horizontally until it finds the first / top line of the 
+    box, then scans down on the left side until it finds the bottom left corner,
+    then calculates where the bottom right corner would be
+    could be made more efficient with better scanning algorithms
+'''
 def get_colored_box_corner_coords(img, box_color):
+    box_coords = [None, None, None, None]
+    rgb_tup_box_color = color_to_rgb_tup(box_color)
     pixel_color_grid = get_pixel_color_grid(img)
-    print(pixel_color_grid)
+    
+    for row_num, row in enumerate(pixel_color_grid):
+        for col_num, pixel_clr in enumerate(row):
+            
+#             # if top left pixel of box has NOT been found
+#             if box_coords[0] == None:
+
+            # found top left pixel of box
+            if pixel_clr == rgb_tup_box_color:
+                top_left_coords = (row_num, col_num)
+                box_coords[0] = top_left_coords
+                    
+#             # if top left pixel of box has been found
+#             else:
+#                 print(row_num, col_num , pixel_clr, (pixel_clr != rgb_tup_box_color))#``````````````````````````````````````````````````
+#                 # found top right pixel of box
+#                 if pixel_clr != rgb_tup_box_color:
+#                     top_right_coords = (row_num, col_num)
+#                     box_coords[1] = top_right_coords
+                    
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                
+                # look for first non-box color to find top right pixel - efficient
+                for col_num_minus_top_left_col_num, pixel_clr in enumerate(row[col_num:]):
+                      
+                    # found top right pixel of box
+                    if pixel_clr != rgb_tup_box_color:
+                        top_right_coords = (row_num, col_num + col_num_minus_top_left_col_num - 1)
+                        box_coords[1] = top_right_coords
+                        break
+                      
+                # if box touches left edge of image
+                if box_coords[1] == None:
+#                     print((row_num, len(row) - 1))#```````````````````````````````````
+                    box_coords[1] = (row_num, len(row) - 1)
+                     
+                     
+                print(box_coords)#``````````````````````````````````````````````````````````````````````
+                
+                
+                # find bottom right pixel of box
+                right_side_box_col_num = box_coords[1][1]
+                for row_num_minus_top_right_row_num, row in enumerate(pixel_color_grid[row_num:]):
+                    # found
+                    if row[right_side_box_col_num] != rgb_tup_box_color:
+                        bottom_right_coords = (row_num_minus_top_right_row_num + row_num - 1, right_side_box_col_num)
+                        box_coords[3] = bottom_right_coords
+                        break
+                
+                # if box touches bottom edge of image
+                if box_coords[3] == None:
+                    box_coords[3] = (len(pixel_color_grid) - 1, right_side_box_col_num)
+                    
+                # "calc: bottom left coords
+                box_coords[2] = (box_coords[3][0], box_coords[0][1])
+                
+                
+                return tuple(box_coords)
+    
+    return box_coords
+    
+#     print(pixel_color_grid)
 
 
 
@@ -236,16 +321,23 @@ def trim_border_by_path(in_img_path, out_img_path):
 if __name__ == '__main__':
     print('in pil_utils main...')
     
-    print(rgb_tup_to_hex((255,255,255)))
-    
+
     
     
     
 #     64fe11
+# 69f3ce
     test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\green_box_jj.png"
+    
+    
+    
+
+    
     img = open_img(test_img_path)
     
-    print(get_colored_box_corner_coords(img, 0x64fe11))
+    p = get_colored_box_corner_coords(img, (105, 243, 206))
+    
+    print(p)
     
     
     
