@@ -12,6 +12,7 @@ import numpy as np
 
 
 
+
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 '''                                                                                              '''
 ''' Uses Direct PIL import                                                                       '''
@@ -48,6 +49,8 @@ def invert_colors(img):
     return PIL.ImageOps.invert(img)
 
 
+
+
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 '''                                                                                              '''
 ''' Non-PIL Import Tools                                                                         '''
@@ -67,6 +70,16 @@ def color_to_rgb_tup(rgb_tup_or_hex_str):
     if isinstance(rgb_tup_or_hex_str, str):
         return rgb_hex_str_to_tup(rgb_tup_or_hex_str)
     return rgb_tup_or_hex_str
+
+''' returns width, height of given box_coords: (top_right, top_left, bottom_right, bottom_left) '''
+def get_box_coord_dims(box_coords_tup):
+    width  = box_coords_tup[1][1] - box_coords_tup[0][1] 
+    height = box_coords_tup[2][0] - box_coords_tup[0][0]
+    return width, height 
+
+
+
+
 
     
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -177,8 +190,6 @@ def trim_border(img):
      
     return crop_from_each_side(in_img, (left_crop, top_crop, right_crop, bottom_crop))
 
-    
-
 
 def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
     draw = ImageDraw.Draw(img)
@@ -199,7 +210,6 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
     return img
 
 
-
 ''' returns the coords of the 4 corners of a box of given color
     returns false if color does not exist in img
     returns tuple: (top_right, top_left, bottom_right, bottom_left)
@@ -218,31 +228,11 @@ def get_colored_box_corner_coords(img, box_color):
     for row_num, row in enumerate(pixel_color_grid):
         for col_num, pixel_clr in enumerate(row):
             
-#             # if top left pixel of box has NOT been found
-#             if box_coords[0] == None:
-
             # found top left pixel of box
             if pixel_clr == rgb_tup_box_color:
                 top_left_coords = (row_num, col_num)
                 box_coords[0] = top_left_coords
-                    
-#             # if top left pixel of box has been found
-#             else:
-#                 print(row_num, col_num , pixel_clr, (pixel_clr != rgb_tup_box_color))#``````````````````````````````````````````````````
-#                 # found top right pixel of box
-#                 if pixel_clr != rgb_tup_box_color:
-#                     top_right_coords = (row_num, col_num)
-#                     box_coords[1] = top_right_coords
-                    
-                
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                
+
                 # look for first non-box color to find top right pixel - efficient
                 for col_num_minus_top_left_col_num, pixel_clr in enumerate(row[col_num:]):
                       
@@ -254,12 +244,8 @@ def get_colored_box_corner_coords(img, box_color):
                       
                 # if box touches left edge of image
                 if box_coords[1] == None:
-#                     print((row_num, len(row) - 1))#```````````````````````````````````
                     box_coords[1] = (row_num, len(row) - 1)
-                     
-                     
-                print(box_coords)#``````````````````````````````````````````````````````````````````````
-                
+                                     
                 
                 # find bottom right pixel of box
                 right_side_box_col_num = box_coords[1][1]
@@ -280,9 +266,22 @@ def get_colored_box_corner_coords(img, box_color):
                 
                 return tuple(box_coords)
     
-    return box_coords
+    return False
     
 #     print(pixel_color_grid)
+
+
+''' resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
+    box_coords: (top_right, top_left, bottom_right, bottom_left) '''
+def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
+    box_width, box_height = get_box_coord_dims(box_coords)
+    
+    print(box_width, box_height)
+    
+
+
+
+
 
 
 
@@ -324,20 +323,38 @@ if __name__ == '__main__':
 
     
     
-    
+    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode.png"
 #     64fe11
 # 69f3ce
     test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\green_box_jj.png"
     
-    
-    
+    save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\pasted.png"
+    box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
+
+
+
+
+    img = open_img(test_img_path)
+    barcode_img = open_img(barcode_img_path)
+
+    paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
+
+
+
+
 
     
-    img = open_img(test_img_path)
+#     img = open_img(test_img_path)
+#     barcode_img = open_img(barcode_img_path)
+#     
+#     img.paste(barcode_img, (4,10))
+#     
+#     img.save(save_img_path)
+#     img.show()
     
-    p = get_colored_box_corner_coords(img, (105, 243, 206))
+#     p = get_colored_box_corner_coords(img, (105, 243, 206))
     
-    print(p)
+#     print(p)
     
     
     
