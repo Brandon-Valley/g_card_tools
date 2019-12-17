@@ -6,8 +6,10 @@ import Mcalisters_Deli
 
 import clipboard_tools as cb_tools
 
+# to import from parent dir
 import sys, os
-sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) # to import from parent dir
+sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
+# from parent dir
 import file_system_utils as fsu
 
 

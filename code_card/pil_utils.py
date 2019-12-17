@@ -443,7 +443,7 @@ def trim_border_by_path(in_img_path, out_img_path):
 if __name__ == '__main__':
     print('in pil_utils main...')
     
-    font_path = 'fonts\\cour.ttf'
+    font_path = 'fonts\\SourceCodePro-Bold.ttf'
     
     
     barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png"
@@ -456,7 +456,7 @@ if __name__ == '__main__':
 #     box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
     box_coords = (((97, 51), (97, 320), (200, 51), (200, 320)))
     
-    lines = ['AAAAAAAAA', 'AAAAAAAAA']
+    lines = ['123456789', 'Value$']
 #     lines = ['abcdefghijklnop']
 #     lines = ['a', 'G', 'S']
     

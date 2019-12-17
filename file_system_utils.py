@@ -183,8 +183,17 @@ def copy_object_to_dest(in_path, dest_parent_dir_path):
         shutil.copy(in_path, dest_parent_dir_path)
 
 def make_dir_if_not_exist(dir_path):
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+    abs_dir_path = get_abs_path_from_rel_path(dir_path)
+    if not os.path.exists(abs_dir_path):
+        os.makedirs(abs_dir_path)
+        
+        
+def make_file_if_not_exist(file_path):
+    parent_dir_path = get_parent_dir_from_path(file_path)
+    make_dir_if_not_exist(parent_dir_path)
+    if not is_file(file_path):
+        file = open(file_path, "w") 
+        file.close()
         
 def delete_if_exists(path):
     if os.path.exists(path):
