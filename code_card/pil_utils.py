@@ -212,13 +212,7 @@ def add_border(img, border, color=0):
 
 
 ''' returns row_offset, col_offset needed to paste given img into given dims with given alignment types '''
-def get_align_paste_offset(img, fit_width, fit_height, horz_align = 'centered', vert_align = 'centered'):
-    img_w, img_h = img.size
-    
-    
-    print('in get_align paste offset, img_w, img_h: ', img_w, img_h)#````````````````````````````````````````````````````````````
-    print('in get_align paste offset, fit_w, fit_h: ', fit_width, fit_width)#`````````````````````````````````````````````````````
-    
+def get_align_paste_offset(img_w, img_h, fit_width, fit_height, horz_align = 'centered', vert_align = 'centered'):
     if  horz_align == 'left':
         col_offset = 0
     elif horz_align == 'right':
@@ -282,8 +276,6 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path ):
-    
-
     # get final aspect ratio
     longest_line_len = len(max(lines, key=len))
 #     lines_aspect_ratio = longest_line_len / len(lines)
@@ -299,25 +291,18 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     # get font size
     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)
     print('box_h / len(lines): ', box_h / len(lines))
-#     font_size = int(min(box_w / total_aspect_ratio, box_h / len(lines))) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#     font_size = int(min(10000000, box_w / total_aspect_ratio))
-
-
-
-# line_length = (aspect_ratio * char_h) * num_chars
 
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
 
-#     font_size = int(min(10000000, font_aspect_ratio * longest_line_len))
-#     print(font_size)
-#     print('my methode char_h: ', )
+    # get align offsets
+    full_text_w = font_aspect_ratio * font_h * longest_line_len
+    full_text_h = font_h * len(lines)
     
+    y_align_offset, x_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, horz_align = 'centered', vert_align = 'centered')
     
-    # write text on image
-#     font = load_font(font_path, font_size)
-#     font = load_font(font_path, 29)
+    print('offsets, x, y: ', x_align_offset, y_align_offset)#```````````````````````````````````````````````````````````````````````
+
     font = load_font_of_height(font_path, font_h)
-#     print(25 / 29)
     
     draw = ImageDraw.Draw(img)
     char_w, char_h = draw.textsize("A", font) # need ??? slow?????????????????????????????????????????????
@@ -327,42 +312,13 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
      
     for line_num, line in enumerate(lines):
         for char_num, char in enumerate(line):
-            x_draw = (char_num * char_w) + box_coords_tup[0][1]
-            y_draw = (char_h * line_num) + box_coords_tup[0][0]
+            x_draw = (char_num * char_w) + box_coords_tup[0][1] + x_align_offset
+            y_draw = (char_h * line_num) + box_coords_tup[0][0] + y_align_offset
             
             draw.text((x_draw, y_draw), char, txt_color, font)
 
-     
-#      
-#     line_num = 0
-#     for line_num in range(len(lines)):
-#         line = lines[line_num]
-#         x_draw = 0
-#         
-#         for letter_num in range(len(line)):
-#             letter = line[letter_num]
-#             draw.text((x_draw, letter_h * line_num), letter, txt_color, font)
-#             x_draw += letter_w
-#         line_num += 10.
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#      
-#     x_draw = 0
-#     line_num = 0
-#     letter = 'A'
-#     
-#     draw.text((x_draw, letter_h * line_num), letter, txt_color, font)
-    
-    img.show()
-    
-    
-    print(total_aspect_ratio)
+    return img
+
 
 
 ''' returns the coords of the 4 corners of a box of given color
@@ -436,7 +392,8 @@ def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align =
     box_width, box_height = get_box_coord_dims(box_coords)
     resized_top_img = shrink_img_to_fit_dims(top_img, box_width, box_height)
     
-    in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img, box_width, box_height, horz_align = 'centered', vert_align = 'centered')
+    top_img_h, top_img_w = top_img.size
+    in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img_w, top_img_h, box_width, box_height, horz_align = 'centered', vert_align = 'centered')
     
     row_offset = box_coords[0][0] + in_box_row_offset
     col_offset = box_coords[0][1] + in_box_col_offset
@@ -499,14 +456,14 @@ if __name__ == '__main__':
 #     box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
     box_coords = (((97, 51), (97, 320), (200, 51), (200, 320)))
     
-    lines = ['abc de', 'IJKl m  nokp']
+    lines = ['AAAAAAAAA', 'AAAAAAAAA']
 #     lines = ['abcdefghijklnop']
 #     lines = ['a', 'G', 'S']
     
     
     img = open_img(test_img_path)
     txt_img = write_txt_on_img_in_box_coords(img, box_coords, lines, 'black', font_path)
-    
+    txt_img.show()
     
 #     
 # 
