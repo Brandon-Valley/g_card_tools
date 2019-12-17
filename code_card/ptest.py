@@ -1,9 +1,14 @@
 l = ['a','b','c','d']
 
-for letter_num, letter in enumerate(l[2:]):
-    print(letter_num, letter) 
+
+for e_n, e in enumerate(l):
+#     print('at top of loop, l: ', l)
+    print('popping ', e)
     
-    
+    if e == 'd':
+        l.pop(e_n)
+
+    print('after pop, l: ', l)
     
     
     

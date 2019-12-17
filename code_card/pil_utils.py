@@ -192,7 +192,42 @@ def rotate_pixel_color_grid(in_grid, degrees):
         new_pcg.append(new_pcg_row_l)
     return new_pcg
     
- 
+def get_color_occurrence_d_from_pixel_color_grid(pcg):
+    c_occ_d = {}
+    
+    for row in pcg:
+        for pixel_color in row:
+            if pixel_color in c_occ_d:
+                c_occ_d[pixel_color] += 1
+            else:
+                c_occ_d[pixel_color] = 1
+    return c_occ_d
+    
+def normalize_pixel_color_grid__by_dominant(pcg, norm_factor = 100):
+    def colors_within_normilization_factior(c1, c2):
+        if abs(c1[0] - c2[0]) <= norm_factor and \
+           abs(c1[1] - c2[1]) <= norm_factor and \
+           abs(c1[2] - c2[2]) <= norm_factor and \
+           c1 != c2:
+            return True
+        return False
+    
+    clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
+
+    sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
+    print(sorted_clr_occ_d)
+    
+    
+    for cur_clr_occ_tup in sorted_clr_occ_d:
+        for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
+#             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
+            if colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
+                sorted_clr_occ_d.pop(clr_occ_tup_num)
+    
+    print(sorted_clr_occ_d)    
+    print(len(sorted_clr_occ_d))    
+            
+
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 '''                                                                                              '''
 ''' Simple Tools                                                                                 '''
@@ -229,8 +264,14 @@ def get_align_paste_offset(img_w, img_h, fit_width, fit_height, horz_align = 'ce
         
     return int(row_offset), int(col_offset)
 
-
-
+def get_list_of_colors_in_image(img):
+    color_list = []
+    pcg = get_pixel_color_grid(img)
+    for row in pcg:
+        for pixel_color in row:
+            if pixel_color not in color_list:
+                color_list.append(pixel_color)
+    return color_list
 
 
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -336,11 +377,17 @@ def get_colored_box_corner_coords(img, box_color):
     rgb_tup_box_color = color_to_rgb_tup(box_color)
     pixel_color_grid = get_pixel_color_grid(img)
     
+#     print('pixel_color_grid: ', pixel_color_grid)#````````````````````````````````````````````````````````````````
+    
     for row_num, row in enumerate(pixel_color_grid):
+#         print('scanning row #: ', row_num) #``````````````````````````````````````````````````````````````````````
         for col_num, pixel_clr in enumerate(row):
+#             print(rgb_tup_box_color, pixel_clr)#````````````````````````````````````````````````````````````````````````
             
             # found top left pixel of box
             if pixel_clr == rgb_tup_box_color:
+                print('found match')#```````````````````````````````````````````````````````````````````````````````
+#                 return#`````````````````````````````````````````````````````````````````````````````````````````````
                 top_left_coords = (row_num, col_num)
                 box_coords[0] = top_left_coords
 
@@ -383,8 +430,6 @@ def get_colored_box_corner_coords(img, box_color):
 
 
 
-
-
 ''' returns img after it resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
     box_coords: (top_right, top_left, bottom_right, bottom_left) '''
 def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
@@ -401,6 +446,17 @@ def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align =
     background_img.paste(top_img, (col_offset, row_offset))
     return background_img
 
+
+
+''' returns dict  with all the same keys as box_colors_d, but with the box coords of that that color box in the given img '''
+def get_box_coords_d(img, box_colors_d):
+    box_coords_d = {}
+    
+    for box_lbl, box_color in box_colors_d.items():
+        box_coords = get_colored_box_corner_coords(img, box_color)
+        box_coords_d[box_lbl] = box_coords
+        
+    return box_coords_d
 
 
 
@@ -443,137 +499,167 @@ def trim_border_by_path(in_img_path, out_img_path):
 if __name__ == '__main__':
     print('in pil_utils main...')
     
-    font_path = 'fonts\\SourceCodePro-Bold.ttf'
+    color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__g_card.JPG"
+#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\blue.jpg"
+#     img = open_img(color_template_path)
     
     
-    barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png"
-#     64fe11
-# 69f3ce
-    test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\green_box_jj.png"
     
-    save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\pasted.png"
-#     box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
-#     box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
-    box_coords = (((97, 51), (97, 320), (200, 51), (200, 320)))
+    pcg = get_pixel_color_grid_from_path(color_template_path)
+
     
-    lines = ['123456789', 'Value$']
-#     lines = ['abcdefghijklnop']
-#     lines = ['a', 'G', 'S']
+    norm_bd_pcg = normalize_pixel_color_grid__by_dominant(pcg)
     
-    
-    img = open_img(test_img_path)
-    txt_img = write_txt_on_img_in_box_coords(img, box_coords, lines, 'black', font_path)
-    txt_img.show()
-    
-#     
+    clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
+#     print(clr_occ_d)
+    print(len(clr_occ_d))
+# #     print(Image.open(color_template_path).getcolors())
 # 
-#     
-#     print('box_coord dims:  ', get_box_coord_dims(box_coords))
-# 
-# 
-#     img = open_img(test_img_path)
-#     barcode_img = open_img(barcode_img_path)
-#     
-# #     barcode_img = shrink_img_to_fit_dims(barcode_img, 500, 500)
-# 
-# 
-#     
-# 
-# 
-# 
-# 
-#     
-# #     b = shrink_img_to_fit_dims(barcode_img, 100, 50)
-# #     b.save("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png")
-# #     b.show()
-#     
-# #     print('img dims: ', img.size)
-# 
-# #     img.thumbnail([50,50],Image.ANTIALIAS)
-# #     img.show()
-# #  
-#  
-#     pasted_img = paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
-#     
-#     pasted_img.show()
-# 
-# 
-# 
-# 
-# 
+# #     print(get_colored_box_corner_coords(img, (91, 155, 213)))
 # #     
+#     color_template_img = open_img(color_template_path)
+# #     color_template_img = Image.open(color_template_path).convert("RGBa")
+#     color_list = get_list_of_colors_in_image(color_template_img) 
+#     for color in color_list:
+#         print(color)
+    
+#     
+#     
+# #     import make_code_card
+# #     make_code_card.main()
+# #     
+# #     
+#     font_path = 'fonts\\SourceCodePro-Bold.ttf'
+#      
+#      
+#     barcode_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\test_images\\barcode_small.png"
+# #     64fe11
+# # 69f3ce
+#     test_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\test_images\\green_box_jj.png"
+#      
+#     save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\test_images\\pasted.png"
+# #     box_coords = ((4, 9), (4, 41), (9, 9), (9, 41))
+# #     box_coords = ((176, 55), (176, 271), (260, 55), (260, 271))
+#     box_coords = (((97, 51), (97, 320), (200, 51), (200, 320)))
+#      
+#     lines = ['123456789', 'Value$']
+# #     lines = ['abcdefghijklnop']
+# #     lines = ['a', 'G', 'S']
+#      
+#      
+# #     img = open_img(test_img_path)
+# #     txt_img = write_txt_on_img_in_box_coords(img, box_coords, lines, 'black', font_path)
+# #     txt_img.show()
+#      
+# #     
+# # 
+# #     
+# #     print('box_coord dims:  ', get_box_coord_dims(box_coords))
+# # 
+# # 
 # #     img = open_img(test_img_path)
 # #     barcode_img = open_img(barcode_img_path)
-# #      
-# #     img.paste(barcode_img, (0,0))
-# #      
-# #     img.save(save_img_path)
-# #     img.show()
 # #     
-#     p = get_colored_box_corner_coords(img, '64fe11')
-#      
+# # #     barcode_img = shrink_img_to_fit_dims(barcode_img, 500, 500)
+# # 
+# # 
+# #     
+# # 
+# # 
+# # 
+# # 
+# #     
+# # #     b = shrink_img_to_fit_dims(barcode_img, 100, 50)
+# # #     b.save("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\big_data\\images\\test_images\\barcode_small.png")
+# # #     b.show()
+# #     
+# # #     print('img dims: ', img.size)
+# # 
+# # #     img.thumbnail([50,50],Image.ANTIALIAS)
+# # #     img.show()
+# # #  
+# #  
+# #     pasted_img = paste_nicely_in_box_coords(barcode_img, img, box_coords, horz_align = 'centered', vert_align = 'centered')
+# #     
+# #     pasted_img.show()
+# # 
+# # 
+# # 
+# # 
+# # 
+# # #     
+# #     img = open_img(test_img_path)
+#     barcode_img = open_img(barcode_img_path)
+# # #      
+# # #     img.paste(barcode_img, (0,0))
+# # #      
+# # #     img.save(save_img_path)
+# # #     img.show()
+# # #     
+#     p = get_colored_box_corner_coords(img, (91, 155, 213))
+#       
 #     print(p)
-#     
-#     
-#     
-#     
-# #     trim_border_by_path("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools\\code_card\\barcode.png", "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools\\code_card\\barcode_trimmed_border.png")
-# 
-# # #     in_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\pordh4hewmc01.jpg"
-# # #     out_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\pordh4hewmc01_border.jpg"
-# # # #     add_border_by_path(in_img_path, out_img_path, 200, (33,33,33))
-# # #     
-# # #     import font_tools
-# # #     font = font_tools.load_font()
-# # #     lines = ['test line', 'line 222222222222222222']
-# # #     txt_color = 'yellow'
-# # #     simple_monospace_write_txt_on_img_by_path(in_img_path, out_img_path, lines, font, txt_color)
-# # #     show_img_from_path(out_img_path)
-# # #     
-# # #     
-# # #     
-# # #     
-# # # #     input_path = "..\\white_paper_graphs\\btc_graph.jpg"#'../example_pics/big_black_a.jpg'
-# # # #     output_path = '../example_pics/trimmed_green_triangle.jpg'
-# # # #     
-# # # #     trim_border(input_path, output_path)
-# # # #     show_img_from_path(output_path)
-# # # 
-# # # #     pcg = get_pixel_color_grid_from_path(input_path)
-# # # #     show_pixel_color_grid_as_img(pcg)
-# # # #     
-# # # #     pcg2 = rotate_pixel_color_grid(pcg, 90)
-# # # #     show_pixel_color_grid_as_img(pcg2)
-# # # #     
-# # # #     pcg3 = rotate_pixel_color_grid(pcg, 180)
-# # # #     show_pixel_color_grid_as_img(pcg3)
-# # # 
-# # #     invert_colors_by_path("C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\btc_g.JPG","C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\btc_graph_inverted.JPG")
-# # # 
-# # # 
-# # # 
-# # # #     test_m = [[0,0,0],
-# # # #               [1,2,3]]
-# # # #     for r in rotate_pixel_color_grid(test_m, 90):
-# # # #         print(r)
-# # 
-# # 
-# #     OUTPUT_VID_DIMS_L =[(3840,2160),
-# #                         (2560,1440),
-# #                         (1920,1080),
-# #                         (1280, 720),
-# #                          (854, 480),
-# #                          (640, 360),
-# #                          (426, 240)]
-# # 
-# #     x, y = OUTPUT_VID_DIMS_L[7]
-# # #     x = 1000
-# # #     y = x
 # #     
-# #     test_pics_dir_path = 'C:\\Users\\Brandon\\Documents\\Personal_Projects\\vid_m_comp_big_data\\test_pics'
-# #     un_labeled_path = test_pics_dir_path +  '\\tp_' + str(x) + 'x' + str(y) + '.png'
-# # #     labeled_path    = test_pics_dir_path +  '\\tpl_' + str(x) + 'x' + str(y)
-# #     make_solid_color_img((x, y), 'green', un_labeled_path )
-# # #     simple_monospace_write_txt_on_img_by_path(un_labeled_path, labeled_path, [str(x) + 'x' + str(y)], font, txt_color):
+# #     
+# #     
+# #     
+# # #     trim_border_by_path("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools\\code_card\\barcode.png", "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools\\code_card\\barcode_trimmed_border.png")
+# # 
+# # # #     in_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\pordh4hewmc01.jpg"
+# # # #     out_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\pordh4hewmc01_border.jpg"
+# # # # #     add_border_by_path(in_img_path, out_img_path, 200, (33,33,33))
+# # # #     
+# # # #     import font_tools
+# # # #     font = font_tools.load_font()
+# # # #     lines = ['test line', 'line 222222222222222222']
+# # # #     txt_color = 'yellow'
+# # # #     simple_monospace_write_txt_on_img_by_path(in_img_path, out_img_path, lines, font, txt_color)
+# # # #     show_img_from_path(out_img_path)
+# # # #     
+# # # #     
+# # # #     
+# # # #     
+# # # # #     input_path = "..\\white_paper_graphs\\btc_graph.jpg"#'../example_pics/big_black_a.jpg'
+# # # # #     output_path = '../example_pics/trimmed_green_triangle.jpg'
+# # # # #     
+# # # # #     trim_border(input_path, output_path)
+# # # # #     show_img_from_path(output_path)
+# # # # 
+# # # # #     pcg = get_pixel_color_grid_from_path(input_path)
+# # # # #     show_pixel_color_grid_as_img(pcg)
+# # # # #     
+# # # # #     pcg2 = rotate_pixel_color_grid(pcg, 90)
+# # # # #     show_pixel_color_grid_as_img(pcg2)
+# # # # #     
+# # # # #     pcg3 = rotate_pixel_color_grid(pcg, 180)
+# # # # #     show_pixel_color_grid_as_img(pcg3)
+# # # # 
+# # # #     invert_colors_by_path("C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\btc_g.JPG","C:\\Users\\Brandon\\Documents\\Personal_Projects\\white_paper_art_big_data\\white_paper_graphs\\btc_graph_inverted.JPG")
+# # # # 
+# # # # 
+# # # # 
+# # # # #     test_m = [[0,0,0],
+# # # # #               [1,2,3]]
+# # # # #     for r in rotate_pixel_color_grid(test_m, 90):
+# # # # #         print(r)
+# # # 
+# # # 
+# # #     OUTPUT_VID_DIMS_L =[(3840,2160),
+# # #                         (2560,1440),
+# # #                         (1920,1080),
+# # #                         (1280, 720),
+# # #                          (854, 480),
+# # #                          (640, 360),
+# # #                          (426, 240)]
+# # # 
+# # #     x, y = OUTPUT_VID_DIMS_L[7]
+# # # #     x = 1000
+# # # #     y = x
+# # #     
+# # #     test_pics_dir_path = 'C:\\Users\\Brandon\\Documents\\Personal_Projects\\vid_m_comp_big_data\\test_pics'
+# # #     un_labeled_path = test_pics_dir_path +  '\\tp_' + str(x) + 'x' + str(y) + '.png'
+# # # #     labeled_path    = test_pics_dir_path +  '\\tpl_' + str(x) + 'x' + str(y)
+# # #     make_solid_color_img((x, y), 'green', un_labeled_path )
+# # # #     simple_monospace_write_txt_on_img_by_path(un_labeled_path, labeled_path, [str(x) + 'x' + str(y)], font, txt_color):
 
 

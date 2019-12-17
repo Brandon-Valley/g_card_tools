@@ -2,6 +2,11 @@ import json
 import os.path
 
 
+class Json_File_Empty_Exception(Exception):
+    pass
+
+
+
 # changes values of headers already in the file, and appends lines with new headers to the end, or creates new file if dosn't already exist
 def log_vars(log_dict, json_file_path):
     if os.path.isfile(json_file_path): 
@@ -23,7 +28,10 @@ def write(data, output_file_path, indent = 4):
 
 def read(json_file_path):
     with open(json_file_path, "r") as read_file:
-        data = json.load(read_file)
+        try:
+            data = json.load(read_file)
+        except(json.decoder.JSONDecodeError):
+            raise Json_File_Empty_Exception("ERROR:  Json file exsits but is empty, maybe make a fix for this later: ", json_file_path)
     return data
     
     
