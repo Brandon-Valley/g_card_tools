@@ -1,4 +1,4 @@
-# l = ['a','b','c','d']
+l = ['a','b','c','d']
 # 
 # 
 # for e_n, e in enumerate(l):
@@ -12,5 +12,5 @@
 #     
 #     
     
-for x in range(5):
+for x in l[1:]:
     print(x)

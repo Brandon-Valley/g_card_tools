@@ -330,29 +330,54 @@ def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):
     
     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
   
-    sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
-    print(sorted_clr_occ_d)
-      
+    sorted_clr_occ_tup_l = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
+    
+    # build sorted_clr_l
+    sorted_clr_l = []
+    for clr_occ_tup in sorted_clr_occ_tup_l:
+        sorted_clr_l.append(clr_occ_tup[0])
+               
+#     # build clr_norm_d 
     clr_norm_d = {}
-    for cur_clr_occ_tup in sorted_clr_occ_d:
-#         clr_norm_d[cur_clr_occ_tup[0]] = []
-        for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
-#             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
-            if clr_occ_tup[0] not in clr_norm_d.keys() and colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
-                clr_norm_d[clr_occ_tup[0]] = cur_clr_occ_tup[0]
-                sorted_clr_occ_d.pop(clr_occ_tup_num)
+#     i = 0
+#     while(i < len(sorted_clr_l)):
+#         print('at top of while loop, size of sorted_clr_l: ', len(sorted_clr_l))#````````````````````````````````````````````````````
+#         more_common_clr
+
+    while(len(sorted_clr_l) > 1):
+        most_common_color = sorted_clr_l[0]
+        
+        for less_common_color in sorted_clr_l[1:]:
+            if colors_within_normilization_factior(most_common_color, less_common_color):
+                clr_norm_d[less_common_color] = most_common_color
+                sorted_clr_l.remove(less_common_color)
+        sorted_clr_l.pop(0)
+
+
+
+    
+#     checked_clr_l = []
+#     for more_common_clr_num, more_common_clr in enumerate(sorted_clr_l):
+#         
+#         for less_common_clr_num, less_common_clr in enumerate(sorted_clr_l):
+#             if colors_within_normilization_factior(more_common_clr, less_common_clr):
+#                 clr_norm_d[less_common_clr] = more_common_clr
+#                 sorted_clr_l.pop(less_common_clr_num)
+# #         checked_clr_l.append(more_common_clr)
+# #         sorted_clr_l.remove(more_common_clr)
      
     # after finding the colors to normalize in clr_norm_d, go through and change the colors
     print('clr_norm_d: ', clr_norm_d)
-    img2 = img
+#     img2 = img
     for old_clr, new_clr in clr_norm_d.items():
-        img2 = replace_color(img, old_clr, new_clr)
+        print('replacing ', old_clr, ' with ', new_clr)#````````````````````````````````````````````````
+        img = replace_color(img, old_clr, new_clr)
 #         img2.show()
 #     print(sorted_clr_occ_d)    
 #     print(len(sorted_clr_occ_d)) 
 #     return make_img_from_pixel_color_grid(pcg)
 #     img2.show()
-    return img2
+    return img
      
      
      
@@ -634,7 +659,18 @@ if __name__ == '__main__':
     
 #     import make_code_card
 #     make_code_card.main()
-    
+    c_l = [ 
+        (90, 155, 213),
+        (69, 234, 113),
+         (243, 62, 203),
+         (237, 224, 68),
+         (56, 79, 247),
+         (181, 163, 123),
+         (53, 212, 251),
+         (167, 88, 216),
+         (111, 193, 121),
+         (219, 107, 83),
+         (149, 155, 155)]
     
     
 #     
@@ -647,10 +683,29 @@ if __name__ == '__main__':
     print(len(get_list_of_colors_in_image(img)))
     
     img = normalize_pixel_color_grid__by_dominant(img, 10)
-    img.show()
+#     img.show()
     print('after norm')
-    print(get_list_of_colors_in_image(img))
+#     print(get_list_of_colors_in_image(img))
+    print('colors in normalized img: ')
+    for clr in get_list_of_colors_in_image(img):
+        print('  ', clr)
     print(len(get_list_of_colors_in_image(img)))
+    
+    
+    
+    for clr in get_list_of_colors_in_image(img):
+        if clr in c_l:
+            img = replace_color(img, clr, (255,255,255))
+    
+#     print('after replacing correct colors with white')
+#     for clr in get_list_of_colors_in_image(img):
+#         print(clr)
+#     for clr in get_list_of_colors_in_image(img):
+#         if clr != 255
+#         img = replace_color(img, clr, (255,0,0))
+#         (90, 154, 215) (90, 155, 213)
+        
+    img.show()
     
 #     im = Image.open(color_template_path)
 #     rgb_im = im.convert('RGB')
