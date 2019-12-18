@@ -339,7 +339,7 @@ def normalize_colors__by_l(img, color_l, norm_factor):
     return img
     
      
-     
+''' if you have 100 (255, 255, 255) pixels and 50 (255, 255, 254) pixels, replace all with (255, 255, 255) '''
 def normalize_colors__by_dominant(img, norm_factor = 10):    
     pcg = get_pixel_color_grid(img) 
     
