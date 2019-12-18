@@ -1,0 +1,4 @@
+Add gift card number and pin to an app like Stocard,
+Gyft, Giftme, or Pocketzee, to be scanned/manually
+entered in-store. Alternatively, you can write the
+code on your receipt.

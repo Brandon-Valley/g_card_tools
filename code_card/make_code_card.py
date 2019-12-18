@@ -118,7 +118,7 @@ def get_template_type_box_coords(template_type):
 
 
 
-def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
+def make_new_blank_store_template(box_coords, store_name, template_type, instruc_path):
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     blank_template_img_path = get__blank_template_img_path(template_type)
     
@@ -132,7 +132,7 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         # background color to make blank template that will be used to make blank store templates
         img = pu.replace_colors(img, box_color_l, BACKGROUND_COLOR)
         
-        # add labels
+        # add blank template labels
         box_title_l = TEMPLATE_COLORS_DD[template_type].keys()
         
         for box_title in box_title_l:
@@ -151,6 +151,16 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
                                                         txt_box_v_align = lbl_params['txt_box_vert_align'],
                                                         txt_h_align     = lbl_params['txt_horz_align'],
                                                         )
+        
+        # add images        
+        if 'logo' in TEMPLATE_COLORS_DD[template_type]:
+            logo_img_path = pv.LOGOS_DIR_PATH + '\\' + store_name + '__logo.jpg'
+            fsu.raise_exception_if_object_not_exist(logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + logo_img_path)
+            
+            logo_img = pu.open_img(logo_img_path)
+            pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+        
+        
         
         img.save(blank_template_img_path)
         img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -172,13 +182,13 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
 
     
 def main():
-    store_name = 'jimmey_johns'
+    store_name = 'jimmy_johns'
     main_code_str = '6050110010041436106' 
     pin_str = '953'
     value = 25.0
     bonus = False 
     template_type = 'g_card'
-    instruc_type = 'app_or_recipt'
+    instruc_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\txt\\instruction_txt\\add_code_or_receipt.txt"
     
     
     # get template_type_box_coords from json file
@@ -197,7 +207,7 @@ def main():
     
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
-        make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_type)
+        make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_path)
         
     blank_store_template_img = pu.open_img(blank_store_template_img_path)
     
@@ -209,7 +219,7 @@ def main():
     
 #     print(box_coords)
     
-#     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_type = 'app_or_recipt')
+#     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_path = 'app_or_recipt')
     
     
     

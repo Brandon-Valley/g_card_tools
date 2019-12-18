@@ -52,6 +52,16 @@ def get_path_to_current_file(file_obj):
     return os.path.dirname(os.path.abspath(file_obj))
 
 
+def raise_exception_if_object_not_exist(obj_path, custom_msg = None):
+    if not is_file(obj_path) and not is_dir(obj_path):
+        if custom_msg == None:
+            raise Exception("ERROR:  This thing does not exist: ", obj_path)
+        else:
+            raise Exception(custom_msg)
+        
+        
+
+
 
 """ VVVVVVVVVV                                         VVVVVVVVVV"""
 """ VVVVVVVVVV Get info about objects inside GIVEN DIR VVVVVVVVVV"""
