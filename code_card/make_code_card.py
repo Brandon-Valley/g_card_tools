@@ -99,12 +99,7 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
         
         return dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type]
 
-
-
-
-
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
-        
         # after getting the box coords from the color_template_img, replace all color boxes with background color to make
         # blank template that will be used to make blank store templates
         def make_new_blank_template(template_type):
@@ -124,24 +119,21 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
             img.show()
 
         
-            
-            
-        
         if not fsu.is_file(blank_template_img_path):
             print('  Blank template does not already exist, making one now...')
             make_new_blank_template(template_type)
-        else:
-            raise Exception('blank template already made, work on this part now')
+        
+        raise Exception('blank template already made, work on this part now')
         
         
         
         
         
+    print('  Getting box_coords for template type: ', template_type, ' of size: ', TEMPLATE_DIMS_STR, '...')
     box_coords = get_template_type_box_coords(template_type)
-    print(box_coords)
-    
     
     if not fsu.is_file(blank_store_template_img_path):
+        print('  Blank_store_template_img does not exist, making it now...')
         make_new_blank_store_template(box_coords, store_name, template_type, instruc_type)
     
     
