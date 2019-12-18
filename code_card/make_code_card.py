@@ -40,10 +40,15 @@ CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
                               'txt_horz_align'    : 'centered',
                              }
 
+INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
+                              'txt_box_horz_align': 'centered',
+                              'txt_box_vert_align': 'centered',
+                              'txt_horz_align'    : 'centered',
+                             }
+
 BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-                        'biz_id_lbl': {'lbl_lines' : ['Business',
-                                                      'ID:'],
+                        'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
 
 
@@ -132,6 +137,22 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     blank_template_img_path            = get__blank_template_img_path(template_type)
     blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
     
+    
+
+    def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
+        txt_param_d = txt_d['param_d']
+        print('in write_txt_d_to_img, txt_d: ', txt_d)#``````````````````````````````````````````````````````````````````````````````````
+        img = pu.write_txt_on_img_in_box_coords(img,                                                           
+                                                box_coords_tup  = box_coords[box_title], 
+                                                lines           = txt_d['lbl_lines'],
+                                                txt_color       = txt_param_d['color'],
+                                                font_path       = FONT_PATH,
+                                                txt_box_h_align = txt_param_d['txt_box_horz_align'],
+                                                txt_box_v_align = txt_param_d['txt_box_vert_align'],
+                                                txt_h_align     = txt_param_d['txt_horz_align'],
+                                                )
+        return img
+    
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
     def make_new_blank_template(template_type):
@@ -146,28 +167,16 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         box_title_l = TEMPLATE_COLORS_DD[template_type].keys()
         
 
-        
+        print('        Writing labels to blank_template_img...')
         for box_title in box_title_l:
             if box_title in BLANK_TEMPLATE_LBL_D.keys():
-                lbl_d = BLANK_TEMPLATE_LBL_D[box_title]
-                lbl_params = lbl_d['param_d']
-                                                        
-                img = pu.write_txt_on_img_in_box_coords(img,                                                           
-                                                        box_coords_tup  = box_coords[box_title], 
-                                                        lines           = lbl_d['lbl_lines'],
-                                                        txt_color       = lbl_params['color'],
-                                                        font_path       = FONT_PATH,
-                                                        txt_box_h_align = lbl_params['txt_box_horz_align'],
-                                                        txt_box_v_align = lbl_params['txt_box_vert_align'],
-                                                        txt_h_align     = lbl_params['txt_horz_align'],
-                                                        )
+                print('witing titl')
+#                 lbl_d = BLANK_TEMPLATE_LBL_D[box_title]
+#                 lbl_params = lbl_d['param_d']
+                img = write_txt_d_to_img_in_box_coords(img, box_title, BLANK_TEMPLATE_LBL_D[box_title], box_coords)
+                                                
         img.save(blank_template_img_path)
-#         # fill txt_dd
-#         txt_dd = {}
-#         # add from BLANK_TEMPLATE_LBL_D
-#         for box_title in box_title_l:
-#             if box_title in BLANK_TEMPLATE_LBL_D.keys():
-#                 txt_dd[box_title] = BLANK_TEMPLATE_LBL_D[box_title]
+
 #                 
 #                 
 #                 
@@ -212,10 +221,21 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         print('      Blank_template_img does not already exist, creating it now...')
         make_new_blank_template(template_type)
     
-#     raise Exception('blank template already made, work on this part now')
-    
     # make blank_store_template_img
     img = pu.open_img(blank_template_img_path)
+    
+    
+#     BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
+#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
+    
+    # add instruc
+    instruc_txt_d = {'lbl_lines' : read_text_file(instruc_path),
+                     'param_d'   : INSTRUC_PARAM_D}
+    write_txt_d_to_img_in_box_coords(img, 'instruc', instruc_txt_d, box_coords)
+    
+    
+    
+    
     
     # add images        
     if 'logo' in TEMPLATE_COLORS_DD[template_type]:
@@ -239,7 +259,6 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
     #         
     img.save(blank_store_template_img_path)
-#     img.show()
      
      
      
@@ -264,31 +283,31 @@ def main():
     print('  Getting template_type_box_coords...')
     template_type_box_coords = get_template_type_box_coords(template_type)
     
-    
+     
     # get blank_store_template_img from path
         # if blank_store_template image does not exist, make it
             # if blank_template_img does not already exist, it will be created in the process
     print('  Getting blank_store_template_img...')
     blank_store_template_img_path = get__blank_store_template_img_path(store_name)
-    
+     
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
         make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_path)
-        
-        
-        
-        
+         
+         
+         
+         
     blank_store_template_img = pu.open_img(blank_store_template_img_path)
     blank_store_template_img.show()
-        
-    
-    
-    
+         
+     
+     
+     
 #     print(box_coords)
-    
+     
 #     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_path = 'app_or_recipt')
-    
-    
+     
+     
     
 if __name__ == '__main__':
     main()

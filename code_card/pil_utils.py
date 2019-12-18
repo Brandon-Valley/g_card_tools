@@ -542,7 +542,7 @@ def get_colored_box_corner_coords(img, box_color):
 ''' returns img after it resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
     box_coords: (top_right, top_left, bottom_right, bottom_left) '''
 def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
-    print('in paste_nicely, box_coords: ', box_coords)#````````````````````````````````````````````````````````````````````````````````
+#     print('in paste_nicely, box_coords: ', box_coords)#````````````````````````````````````````````````````````````````````````````````
     
     # resize top img to fit in box coords
     box_width, box_height = get_box_coord_dims(box_coords)
@@ -551,7 +551,7 @@ def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align =
     top_img_w, top_img_h = resized_top_img.size
 #                                         get_align_paste_offset(img_w, img_h, fit_width, fit_height, horz_align, vert_align)
     in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img_w, top_img_h, box_width, box_height, horz_align, vert_align)
-    print('init offsets, row, col:  ', in_box_row_offset, in_box_col_offset)#````````````````````````````````````````````````````````
+#     print('init offsets, row, col:  ', in_box_row_offset, in_box_col_offset)#````````````````````````````````````````````````````````
     
     row_offset = box_coords[0][0] + in_box_row_offset
     col_offset = box_coords[0][1] + in_box_col_offset
