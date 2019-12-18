@@ -3,7 +3,6 @@ import pil_utils
 
 # to import from parent dir 
 import sys, os
-from matplotlib.offsetbox import kwargs
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
@@ -103,7 +102,7 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
         # after getting the box coords from the color_template_img, replace all color boxes with background color to make
         # blank template that will be used to make blank store templates
-        def make_new_blank_template(template_type):+
+        def make_new_blank_template(template_type):
             print('  Making new blank_template_img for type: ', template_type, '...')
             img = pil_utils.open_img(normalized_color_template_img_path)
             box_color_l = TEMPLATE_COLORS_DD[template_type].values()
@@ -138,8 +137,72 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     
     
     
+
+def get__blank_store_template_img_path(store_name):         return TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
+def get__color_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
+def get__normalized_color_template_img_path(template_type): return TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
+def get__blank_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'             + template_type + '.png'
     
     
+    
+    
+def get_template_type_box_coords(template_type):
+    color_template_img_path            = get__color_template_img_path(template_type)
+    normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
+    # read in data from json file if it exists
+    if fsu.is_file(TEMPLATE_BOX_COORDS_JSON_PATH):
+        dim_template_box_coords_ddd = json_logger.read(TEMPLATE_BOX_COORDS_JSON_PATH)
+    else:
+        dim_template_box_coords_ddd = {}
+    
+    # add template dims to ddd if not already exist 
+    if TEMPLATE_DIMS_STR not in dim_template_box_coords_ddd:
+        dim_template_box_coords_ddd[TEMPLATE_DIMS_STR] = {}
+        
+#         template_box_coords_dd = dim_template_box_coords_ddd[TEMPLATE_DIMS_STR]
+    
+    # add template_type if needed
+    if template_type not in dim_template_box_coords_ddd[TEMPLATE_DIMS_STR]:
+        dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = {}
+        
+    # if box coords don't already exist for template type, get them from image, also log in json file
+    if dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] == {}:
+#             color_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\color_template__' + template_type + '.JPG'
+        
+        # raise exception if color template img does not exist
+        if not fsu.is_file(color_template_img_path):
+            raise Exception('ERROR:  color_template_img_path does not exist: ', color_template_img_path, 
+                            '/ncannot get box_coords, maybe add a good way of adding new color templates here')
+            
+        # normalize the colors of the original color_template_img if not already done
+        if not fsu.is_file(normalized_color_template_img_path):
+            print('  Normalized_color_template_img does not exist, creating it now...')
+            img = pil_utils.open_img(color_template_img_path)
+            # power point likes to add new colors to images so first, need to normalize all colors by dominant - 
+            # meaning that if you have 100 (255, 255, 255) pixels and 50 (255, 255, 254) pixels, replace all with (255, 255, 255)
+            print('    Normalizing colors of original color_template_img by dominant...')
+            img = pil_utils.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
+            
+            # sometimes the new colors added by power point out-number the original colors, so use same method to normalize
+            # all colors in img to the list of box colors
+            box_color_l = TEMPLATE_COLORS_DD[template_type].values()
+            print('    Normalizing those colors by list...')
+            img = pil_utils.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
+            
+            print('    Saving new normalized_color_template_img at ', normalized_color_template_img_path, '...')
+            img.save(normalized_color_template_img_path)
+        
+        # get box coords from normalized_color_template_img
+        normalized_color_template_img = pil_utils.open_img(normalized_color_template_img_path)
+        print('  Getting box coords from normalized_color_template_img...')
+        box_coords = pil_utils.get_box_coords_d(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type])
+        
+        dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = box_coords
+        json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
+    
+    return dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type]
+
+
     
     
     
@@ -150,10 +213,12 @@ def main():
     pin_str = '953'
     value = 25.0
     bonus = False 
+    template_type = 'g_card'
     
+    box_coords = get_template_type_box_coords(template_type)
+    print(box_coords)
     
-    
-    make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_type = 'app_or_recipt')
+#     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_type = 'app_or_recipt')
     
     
     
