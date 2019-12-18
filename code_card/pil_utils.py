@@ -116,29 +116,45 @@ def get_aspect_ratio_monospace(font_pth):
 
 # this seems really dumb
 def load_font_of_height(font_path, font_height):
+    print('font_h: ', font_height)#``````````````````````````````````````````````````````````````````````````````````````````````````
+
     font_size = font_height
-    
-    
+     
+     
 #     c = 'A'
 # font = ImageFont.truetype(font_path, font_size)
 # width = font.getsize(c)[0]
 # height = font.getsize(c)[1]
 # im = Image.new("RGBA", (width, height), (0, 0, 0))
-    
-    
-    
-    
+     
+     
+     
+     
     while(True):
+#         print('font_h: ', font_height)#``````````````````````````````````````````````````````````````````````````````````````````````````
         font = load_font(font_path, font_size)
 #         img = IMAGE.new()
 #         draw = ImageDraw.Draw(img)
 #         char_w, char_h = draw.textsize("A", font)
         char_w, char_h = font.getsize("A")
-        
+         
         if char_h == font_height:
             return font
-        
+         
         font_size += 1
+
+# # this seems really dumb
+# def load_font_of_height(font_path, font_height):
+#     font_size = font_height
+#     img = Image.new('RGB', (100,1000))
+#     while(True):
+#         font = load_font(font_path, font_size)
+#         draw = ImageDraw.Draw(img)
+#         char_w, char_h = draw.textsize("A", font)
+#         
+#         print(font_height)
+#         if char_h == font_height:
+#             return font
 
     
     
@@ -440,11 +456,12 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
  
      
     box_w, box_h = get_box_coord_dims(box_coords_tup)
+    print('box_h: ', box_h)#`````````````````````````````````````````````````````````````````````````
 #     print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
      
     # get font size
-#     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
-#     print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
+    print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
+    print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
  
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
  
@@ -619,6 +636,14 @@ if __name__ == '__main__':
     
     import make_code_card
     make_code_card.main()
+
+#     img = open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
+# #     img = replace_color(img, (181, 163, 123), (255,0,0))
+# #     img.show()
+#     print(get_box_coords_d(img, {'sfsd': (181, 163, 123)}))
+
+
+
 #     c_l = [ 
 #         (90, 155, 213),
 #         (69, 234, 113),

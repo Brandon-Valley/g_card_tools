@@ -46,10 +46,10 @@ INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
                               'txt_horz_align'    : 'centered',
                              }
 
-BLANK_TEMPLATE_LBL_D = {'biz_id_lbl'   : {'lbl_lines' : ['  Pin:  '],
+BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
+                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
+                        'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
-#                         'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
-#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
 
 
 
