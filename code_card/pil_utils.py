@@ -429,7 +429,7 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 
-def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path, txt_box_horz_align, txt_box_vert_align ):
+def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path, txt_box_h_align, txt_box_v_align, txt_h_align):
     # get final aspect ratio
     longest_line_len = len(max(lines, key=len))
 #     lines_aspect_ratio = longest_line_len / len(lines)
@@ -452,9 +452,9 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     full_text_w = font_aspect_ratio * font_h * longest_line_len
     full_text_h = font_h * len(lines)
     
-    y_align_offset, x_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, txt_box_horz_align, txt_box_vert_align)
+    y_txt_box_align_offset, x_txt_box_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, txt_box_h_align, txt_box_v_align)
     
-    print('offsets, x, y: ', x_align_offset, y_align_offset)#```````````````````````````````````````````````````````````````````````
+    print('offsets, x, y: ', x_txt_box_align_offset, y_txt_box_align_offset)#```````````````````````````````````````````````````````````````````````
 
     font = load_font_of_height(font_path, font_h)
     
@@ -463,11 +463,14 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     print('probably correct char_h: ', char_h, 'w: ', char_w)
     Image.MAX_IMAGE_PIXELS = 1000000000   #need this here
      
-     
+    longest_line_w = char_w * longest_line_len
     for line_num, line in enumerate(lines):
+        line_w = char_w * len(line)
+        x_txt_align_offset = get_align_paste_offset(line_w, char_h, longest_line_w, char_h, txt_h_align, 'centered')[1]
+        
         for char_num, char in enumerate(line):
-            x_draw = (char_num * char_w) + box_coords_tup[0][1] + x_align_offset
-            y_draw = (char_h * line_num) + box_coords_tup[0][0] + y_align_offset
+            x_draw = (char_num * char_w) + box_coords_tup[0][1] + x_txt_box_align_offset + x_txt_align_offset
+            y_draw = (char_h * line_num) + box_coords_tup[0][0] + y_txt_box_align_offset
             
             draw.text((x_draw, y_draw), char, txt_color, font)
 
