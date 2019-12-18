@@ -38,7 +38,7 @@ CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
                               'txt_box_horz_align': 'centered',
                               'txt_box_vert_align': 'top',
                               'txt_horz_align'    : 'centered',
-                             }
+                            }
 
 INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
                               'txt_box_horz_align': 'centered',
@@ -46,10 +46,10 @@ INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
                               'txt_horz_align'    : 'centered',
                              }
 
-BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
-                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-                        'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
+BLANK_TEMPLATE_LBL_D = {'biz_id_lbl'   : {'lbl_lines' : ['  Pin:  '],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
+#                         'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
+#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
 
 
 
@@ -142,8 +142,12 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
         txt_param_d = txt_d['param_d']
         print('in write_txt_d_to_img, txt_d: ', txt_d)#``````````````````````````````````````````````````````````````````````````````````
+        print('box_coords[box_title]: ', box_coords[box_title])#``````````````````````````````````````````````````````````
         img = pu.write_txt_on_img_in_box_coords(img,                                                           
                                                 box_coords_tup  = box_coords[box_title], 
+#                                                 box_coords_tup  = [[509, 19], [509, 472], [660, 19], [660, 472]], 
+# [[671, 247], [671, 471], [671, 247], [671, 471]]
+# [[671, 20], [671, 243], [769, 20], [769, 243]]
                                                 lines           = txt_d['lbl_lines'],
                                                 txt_color       = txt_param_d['color'],
                                                 font_path       = FONT_PATH,
@@ -151,6 +155,7 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
                                                 txt_box_v_align = txt_param_d['txt_box_vert_align'],
                                                 txt_h_align     = txt_param_d['txt_horz_align'],
                                                 )
+        print('about to return img')#``````````````````````````````````````````````````````````````````````````````````````````````
         return img
     
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make

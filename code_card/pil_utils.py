@@ -437,46 +437,49 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     font_aspect_ratio = get_aspect_ratio_monospace(font_path)
 #     print(font_aspect_ratio)#````````````````````````````````````````````````````````````````````````````````````````
     total_aspect_ratio = (longest_line_len * font_aspect_ratio) / len(lines)
-
-    
+ 
+     
     box_w, box_h = get_box_coord_dims(box_coords_tup)
 #     print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
-    
+     
     # get font size
 #     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
 #     print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
-
+ 
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
-
+ 
     # get align offsets
     full_text_w = font_aspect_ratio * font_h * longest_line_len
     full_text_h = font_h * len(lines)
-    
+     
     y_txt_box_align_offset, x_txt_box_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, txt_box_h_align, txt_box_v_align)
-    
+     
 #     print('offsets, x, y: ', x_txt_box_align_offset, y_txt_box_align_offset)#```````````````````````````````````````````````````````````````````````
-
+ 
+    print('in write, about to get font')#`````````````````````````````````````````````````````````````````````````````````````````````
     font = load_font_of_height(font_path, font_h)
-    
+    print('in write, got font')#`````````````````````````````````````````````````````````````````````````````````````````````
+
+     
     draw = ImageDraw.Draw(img)
     char_w, char_h = draw.textsize("A", font) # need ??? slow?????????????????????????????????????????????
 #     print('probably correct char_h: ', char_h, 'w: ', char_w) #````````````````````````````````````````````````````````````````````````````````````
     Image.MAX_IMAGE_PIXELS = 1000000000   #need this here
-     
+      
+    print('in write, about to start writing')#``````````````````````````````````````````````````````````````````````````
+      
     longest_line_w = char_w * longest_line_len
     for line_num, line in enumerate(lines):
         line_w = char_w * len(line)
         x_txt_align_offset = get_align_paste_offset(line_w, char_h, longest_line_w, char_h, txt_h_align, 'centered')[1]
-        
+         
         for char_num, char in enumerate(line):
             x_draw = (char_num * char_w) + box_coords_tup[0][1] + x_txt_box_align_offset + x_txt_align_offset
             y_draw = (char_h * line_num) + box_coords_tup[0][0] + y_txt_box_align_offset
-            
+             
             draw.text((x_draw, y_draw), char, txt_color, font)
-
+ 
     return img
-
-
 
 ''' returns the coords of the 4 corners of a box of given color
     returns false if color does not exist in img
