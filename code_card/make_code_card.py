@@ -32,118 +32,12 @@ TEMPLATE_COLORS_DD = {
 TEMPLATE_DIMS = (492, 1091)
 TEMPLATE_DIMS_STR = str(TEMPLATE_DIMS[0]) + 'x' + str(TEMPLATE_DIMS[1])
 TEMPLATE_DIMS_DIR_PATH = pv.CODE_CARDS_DIR_PATH + '\\' + TEMPLATE_DIMS_STR
-
-
- 
-
-# def make_code_card(store_name, template_type, main_code, pin):
-
-
-def make_new_store_code_card_template(store_name, template_type, options_l, instruc_type = None, ):
-    blank_store_template_img_path      = TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
-    color_template_img_path            = TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
-    normalized_color_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
-    blank_template_img_path            = TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'             + template_type + '.png'
-    
-    def get_template_type_box_coords(template_type):
-        # read in data from json file if it exists
-        if fsu.is_file(TEMPLATE_BOX_COORDS_JSON_PATH):
-            dim_template_box_coords_ddd = json_logger.read(TEMPLATE_BOX_COORDS_JSON_PATH)
-        else:
-            dim_template_box_coords_ddd = {}
-        
-        # add template dims to ddd if not already exist 
-        if TEMPLATE_DIMS_STR not in dim_template_box_coords_ddd:
-            dim_template_box_coords_ddd[TEMPLATE_DIMS_STR] = {}
-            
-#         template_box_coords_dd = dim_template_box_coords_ddd[TEMPLATE_DIMS_STR]
-        
-        # add template_type if needed
-        if template_type not in dim_template_box_coords_ddd[TEMPLATE_DIMS_STR]:
-            dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = {}
-            
-        # if box coords don't already exist for template type, get them from image, also log in json file
-        if dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] == {}:
-#             color_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\color_template__' + template_type + '.JPG'
-            
-            # raise exception if color template img does not exist
-            if not fsu.is_file(color_template_img_path):
-                raise Exception('ERROR:  color_template_img_path does not exist: ', color_template_img_path, 
-                                '/ncannot get box_coords, maybe add a good way of adding new color templates here')
-                
-            # normalize the colors of the original color_template_img if not already done
-            if not fsu.is_file(normalized_color_template_img_path):
-                print('  Normalized_color_template_img does not exist, creating it now...')
-                img = pil_utils.open_img(color_template_img_path)
-                # power point likes to add new colors to images so first, need to normalize all colors by dominant - 
-                # meaning that if you have 100 (255, 255, 255) pixels and 50 (255, 255, 254) pixels, replace all with (255, 255, 255)
-                print('    Normalizing colors of original color_template_img by dominant...')
-                img = pil_utils.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
-                
-                # sometimes the new colors added by power point out-number the original colors, so use same method to normalize
-                # all colors in img to the list of box colors
-                box_color_l = TEMPLATE_COLORS_DD[template_type].values()
-                print('    Normalizing those colors by list...')
-                img = pil_utils.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
-                
-                print('    Saving new normalized_color_template_img at ', normalized_color_template_img_path, '...')
-                img.save(normalized_color_template_img_path)
-            
-            # get box coords from normalized_color_template_img
-            normalized_color_template_img = pil_utils.open_img(normalized_color_template_img_path)
-            print('  Getting box coords from normalized_color_template_img...')
-            box_coords = pil_utils.get_box_coords_d(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type])
-            
-            dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = box_coords
-            json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
-        
-        return dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type]
-
-    def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
-        # after getting the box coords from the color_template_img, replace all color boxes with background color to make
-        # blank template that will be used to make blank store templates
-        def make_new_blank_template(template_type):
-            print('  Making new blank_template_img for type: ', template_type, '...')
-            img = pil_utils.open_img(normalized_color_template_img_path)
-            box_color_l = TEMPLATE_COLORS_DD[template_type].values()
-
-            # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
-            # background color to make blank template that will be used to make blank store templates
-            print('    Replacing box colors with background color, ', BACKGROUND_COLOR, '...')
-            img = pil_utils.replace_colors(img, box_color_l, BACKGROUND_COLOR)
-            
-            print('    Saving new blank_template_img...')
-            img.save(blank_template_img_path)
-            img.show()
-
-        
-        if not fsu.is_file(blank_template_img_path):
-            print('  Blank template does not already exist, making one now...')
-            make_new_blank_template(template_type)
-        
-        raise Exception('blank template already made, work on this part now')
-        
-        
-        
-        
-        
-    print('  Getting box_coords for template type: ', template_type, ' of size: ', TEMPLATE_DIMS_STR, '...')
-    box_coords = get_template_type_box_coords(template_type)
-    
-    if not fsu.is_file(blank_store_template_img_path):
-        print('  Blank_store_template_img does not exist, making it now...')
-        make_new_blank_store_template(box_coords, store_name, template_type, instruc_type)
-    
-    
-    
     
 
 def get__blank_store_template_img_path(store_name):         return TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
 def get__color_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
 def get__normalized_color_template_img_path(template_type): return TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
 def get__blank_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'             + template_type + '.png'
-    
-    
     
     
 def get_template_type_box_coords(template_type):
@@ -201,8 +95,6 @@ def get_template_type_box_coords(template_type):
         json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
     
     return dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type]
-
-
 
 
 
