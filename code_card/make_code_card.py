@@ -3,6 +3,7 @@ import pil_utils
 
 # to import from parent dir 
 import sys, os
+from matplotlib.offsetbox import kwargs
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
@@ -15,8 +16,8 @@ TEMPLATE_BOX_COORDS_JSON_PATH = 'template_box_coords.json'
 # to get, make img in power point, open in paint, use eye drop tool, click edit colors
 TEMPLATE_COLORS_DD = {
                         'g_card': {
-                                   'logo'      : (90, 155, 213),
-                                   'barcode'   : (69, 234, 113),
+                                    'logo'      : (90, 155, 213),
+                                    'barcode'   : (69, 234, 113),
                                     'main_code' : (243, 62, 203),
                                     'instruc'   : (237, 224, 68),
                                     'pin_lbl'   : (56, 79, 247),
@@ -39,7 +40,7 @@ TEMPLATE_DIMS_DIR_PATH = pv.CODE_CARDS_DIR_PATH + '\\' + TEMPLATE_DIMS_STR
 # def make_code_card(store_name, template_type, main_code, pin):
 
 
-def make_new_store_code_card_template(store_name, template_type, options_l, instruc_type):
+def make_new_store_code_card_template(store_name, template_type, options_l, instruc_type = None, ):
     blank_store_template_img_path      = TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
     color_template_img_path            = TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
     normalized_color_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
@@ -102,13 +103,11 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
         # after getting the box coords from the color_template_img, replace all color boxes with background color to make
         # blank template that will be used to make blank store templates
-        def make_new_blank_template(template_type):
+        def make_new_blank_template(template_type):+
             print('  Making new blank_template_img for type: ', template_type, '...')
             img = pil_utils.open_img(normalized_color_template_img_path)
             box_color_l = TEMPLATE_COLORS_DD[template_type].values()
 
-
-            
             # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
             # background color to make blank template that will be used to make blank store templates
             print('    Replacing box colors with background color, ', BACKGROUND_COLOR, '...')
@@ -146,6 +145,14 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     
     
 def main():
+    store_name = 'jimmey_johns'
+    main_code_str = '6050110010041436106' 
+    pin_str = '953'
+    value = 25.0
+    bonus = False 
+    
+    
+    
     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_type = 'app_or_recipt')
     
     
