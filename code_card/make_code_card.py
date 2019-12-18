@@ -1,12 +1,16 @@
 import json_logger
-import pil_utils
+import pil_utils as pu
 
 # to import from parent dir 
 import sys, os
+import project_vars
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
 import project_vars as pv
+
+FONT_NAME = 'SourceCodePro-Semibold'
+FONT_PATH = pv.FONTS_DIR_PATH + '\\' + FONT_NAME + '.ttf'
 
 BACKGROUND_COLOR = (255, 255, 255)
 COLOR_NORMILIZATION_FACTOR = 10
@@ -28,6 +32,20 @@ TEMPLATE_COLORS_DD = {
                                     'value'     : (149, 155, 155)
                                   }
                      }
+
+CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
+                              'txt_box_horz_align': 'centered',
+                              'txt_box_vert_align': 'centered'
+                             }
+
+BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['Pin:'],
+                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
+                        'biz_id_lbl': {'txt'       : ['Business ID:'],
+                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
+
+
+
+
 
 TEMPLATE_DIMS = (492, 1091)
 TEMPLATE_DIMS_STR = str(TEMPLATE_DIMS[0]) + 'x' + str(TEMPLATE_DIMS[1])
@@ -71,25 +89,25 @@ def get_template_type_box_coords(template_type):
         # normalize the colors of the original color_template_img if not already done
         if not fsu.is_file(normalized_color_template_img_path):
             print('  Normalized_color_template_img does not exist, creating it now...')
-            img = pil_utils.open_img(color_template_img_path)
+            img = pu.open_img(color_template_img_path)
             # power point likes to add new colors to images so first, need to normalize all colors by dominant - 
             # meaning that if you have 100 (255, 255, 255) pixels and 50 (255, 255, 254) pixels, replace all with (255, 255, 255)
             print('    Normalizing colors of original color_template_img by dominant...')
-            img = pil_utils.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
+            img = pu.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
             
             # sometimes the new colors added by power point out-number the original colors, so use same method to normalize
             # all colors in img to the list of box colors
             box_color_l = TEMPLATE_COLORS_DD[template_type].values()
             print('    Normalizing those colors by list...')
-            img = pil_utils.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
+            img = pu.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
             
             print('    Saving new normalized_color_template_img at ', normalized_color_template_img_path, '...')
             img.save(normalized_color_template_img_path)
         
         # get box coords from normalized_color_template_img
-        normalized_color_template_img = pil_utils.open_img(normalized_color_template_img_path)
+        normalized_color_template_img = pu.open_img(normalized_color_template_img_path)
         print('  Getting box coords from normalized_color_template_img...')
-        box_coords = pil_utils.get_box_coords_d(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type])
+        box_coords = pu.get_box_coords_d(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type])
         
         dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = box_coords
         json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
@@ -105,12 +123,35 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
     def make_new_blank_template(template_type):
-        img = pil_utils.open_img(normalized_color_template_img_path)
+        img = pu.open_img(normalized_color_template_img_path)
         box_color_l = TEMPLATE_COLORS_DD[template_type].values()
 
         # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
         # background color to make blank template that will be used to make blank store templates
-        img = pil_utils.replace_colors(img, box_color_l, BACKGROUND_COLOR)
+        img = pu.replace_colors(img, box_color_l, BACKGROUND_COLOR)
+        
+        # add labels
+        box_title_l = TEMPLATE_COLORS_DD[template_type].keys()
+        
+        for box_title in box_title_l:
+            if box_title in BLANK_TEMPLATE_LBL_D.keys():
+                lbl_d = BLANK_TEMPLATE_LBL_D[box_title]
+#                 print(lbl_d)
+                lbl_params = lbl_d['param_d']
+                img = pu.write_txt_on_img_in_box_coords(img, 
+                                                        box_coords_tup = box_coords[box_title], 
+                                                        lines = lbl_d['lbl_lines'],
+                                                        txt_color = lbl_params['color'],
+                                                        font_path = FONT_PATH,
+                                                        txt_box_horz_align = lbl_params['txt_box_horz_align'],
+                                                        txt_box_vert_align = lbl_params['txt_box_vert_align'])
+                                                      
+        
+        
+        
+        
+        
+        
         
         img.save(blank_template_img_path)
         img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
@@ -121,6 +162,14 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         make_new_blank_template(template_type)
     
     raise Exception('blank template already made, work on this part now')
+    
+    img = pu.open_img(blank_template_img_path)
+    
+    
+    
+    
+    
+    
 
     
 def main():
@@ -132,12 +181,14 @@ def main():
     template_type = 'g_card'
     instruc_type = 'app_or_recipt'
     
+    
     # get template_type_box_coords from json file
         # if the json file does not exist, it will be created
         # if the box_coords are not in the json file, they will be loaded from the normalized_color_template_img
             # if the normalized_color_template_img does not exist, it will be created from the user-made color_template_img
     print('  Getting template_type_box_coords...')
     template_type_box_coords = get_template_type_box_coords(template_type)
+    
     
     # get blank_store_template_img from path
         # if blank_store_template image does not exist, make it
@@ -149,7 +200,7 @@ def main():
         print('    Blank_store_template_img does not exist, creating it now...')
         make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_type)
         
-    blank_store_template_img = pil_utils.open_img(blank_store_template_img_path)
+    blank_store_template_img = pu.open_img(blank_store_template_img_path)
     
     
     blank_store_template_img.show()

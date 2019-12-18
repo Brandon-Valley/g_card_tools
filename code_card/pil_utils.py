@@ -118,10 +118,22 @@ def get_aspect_ratio_monospace(font_pth):
 def load_font_of_height(font_path, font_height):
     font_size = font_height
     
+    
+#     c = 'A'
+# font = ImageFont.truetype(font_path, font_size)
+# width = font.getsize(c)[0]
+# height = font.getsize(c)[1]
+# im = Image.new("RGBA", (width, height), (0, 0, 0))
+    
+    
+    
+    
     while(True):
         font = load_font(font_path, font_size)
-        draw = ImageDraw.Draw(img)
-        char_w, char_h = draw.textsize("A", font)
+#         img = IMAGE.new()
+#         draw = ImageDraw.Draw(img)
+#         char_w, char_h = draw.textsize("A", font)
+        char_w, char_h = font.getsize("A")
         
         if char_h == font_height:
             return font
@@ -417,7 +429,7 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 
-def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path ):
+def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path, txt_box_horz_align, txt_box_vert_align ):
     # get final aspect ratio
     longest_line_len = len(max(lines, key=len))
 #     lines_aspect_ratio = longest_line_len / len(lines)
@@ -440,7 +452,7 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     full_text_w = font_aspect_ratio * font_h * longest_line_len
     full_text_h = font_h * len(lines)
     
-    y_align_offset, x_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, horz_align = 'centered', vert_align = 'centered')
+    y_align_offset, x_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, txt_box_horz_align, txt_box_vert_align)
     
     print('offsets, x, y: ', x_align_offset, y_align_offset)#```````````````````````````````````````````````````````````````````````
 
