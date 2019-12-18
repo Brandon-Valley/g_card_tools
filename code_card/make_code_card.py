@@ -213,22 +213,19 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
     def make_new_blank_template(template_type):
-        print('  Making new blank_template_img for type: ', template_type, '...')
         img = pil_utils.open_img(normalized_color_template_img_path)
         box_color_l = TEMPLATE_COLORS_DD[template_type].values()
 
         # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
         # background color to make blank template that will be used to make blank store templates
-        print('    Replacing box colors with background color, ', BACKGROUND_COLOR, '...')
         img = pil_utils.replace_colors(img, box_color_l, BACKGROUND_COLOR)
         
-        print('    Saving new blank_template_img...')
         img.save(blank_template_img_path)
-        img.show()
+        img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
     
     if not fsu.is_file(blank_template_img_path):
-        print('  Blank template does not already exist, making one now...')
+        print('      Blank_template_img does not already exist, creating it now...')
         make_new_blank_template(template_type)
     
     raise Exception('blank template already made, work on this part now')
@@ -250,13 +247,16 @@ def main():
     print('  Getting template_type_box_coords...')
     template_type_box_coords = get_template_type_box_coords(template_type)
     
-    # if blank_store_template image does not exist, make it
-        # if blank_template_img does not already exist, it will be created in the process
+    # get blank_store_template_img from path
+        # if blank_store_template image does not exist, make it
+            # if blank_template_img does not already exist, it will be created in the process
     print('  Getting blank_store_template_img...')
     blank_store_template_img_path = get__blank_store_template_img_path(store_name)
+    
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
         make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_type)
+        
     blank_store_template_img = pil_utils.open_img(blank_store_template_img_path)
     
     
