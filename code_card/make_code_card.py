@@ -158,6 +158,9 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
             fsu.raise_exception_if_object_not_exist(logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + logo_img_path)
             
             logo_img = pu.open_img(logo_img_path)
+#             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+
+            img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
         
         

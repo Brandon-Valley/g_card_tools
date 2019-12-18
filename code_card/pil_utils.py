@@ -435,16 +435,16 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
 #     lines_aspect_ratio = longest_line_len / len(lines)
 #     print(lines_aspect_ratio)
     font_aspect_ratio = get_aspect_ratio_monospace(font_path)
-    print(font_aspect_ratio)
+#     print(font_aspect_ratio)#````````````````````````````````````````````````````````````````````````````````````````
     total_aspect_ratio = (longest_line_len * font_aspect_ratio) / len(lines)
 
     
     box_w, box_h = get_box_coord_dims(box_coords_tup)
-    print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
+#     print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
     
     # get font size
-    print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)
-    print('box_h / len(lines): ', box_h / len(lines))
+#     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
+#     print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
 
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
 
@@ -454,13 +454,13 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
     
     y_txt_box_align_offset, x_txt_box_align_offset = get_align_paste_offset(full_text_w, full_text_h, box_w, box_h, txt_box_h_align, txt_box_v_align)
     
-    print('offsets, x, y: ', x_txt_box_align_offset, y_txt_box_align_offset)#```````````````````````````````````````````````````````````````````````
+#     print('offsets, x, y: ', x_txt_box_align_offset, y_txt_box_align_offset)#```````````````````````````````````````````````````````````````````````
 
     font = load_font_of_height(font_path, font_h)
     
     draw = ImageDraw.Draw(img)
     char_w, char_h = draw.textsize("A", font) # need ??? slow?????????????????????????????????????????????
-    print('probably correct char_h: ', char_h, 'w: ', char_w)
+#     print('probably correct char_h: ', char_h, 'w: ', char_w) #````````````````````````````````````````````````````````````````````````````````````
     Image.MAX_IMAGE_PIXELS = 1000000000   #need this here
      
     longest_line_w = char_w * longest_line_len
@@ -542,17 +542,23 @@ def get_colored_box_corner_coords(img, box_color):
 ''' returns img after it resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
     box_coords: (top_right, top_left, bottom_right, bottom_left) '''
 def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
+    print('in paste_nicely, box_coords: ', box_coords)#````````````````````````````````````````````````````````````````````````````````
+    
     # resize top img to fit in box coords
     box_width, box_height = get_box_coord_dims(box_coords)
     resized_top_img = shrink_img_to_fit_dims(top_img, box_width, box_height)
     
-    top_img_h, top_img_w = top_img.size
-    in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img_w, top_img_h, box_width, box_height, horz_align = 'centered', vert_align = 'centered')
+    top_img_w, top_img_h = resized_top_img.size
+#                                         get_align_paste_offset(img_w, img_h, fit_width, fit_height, horz_align, vert_align)
+    in_box_row_offset, in_box_col_offset = get_align_paste_offset(top_img_w, top_img_h, box_width, box_height, horz_align, vert_align)
+    print('init offsets, row, col:  ', in_box_row_offset, in_box_col_offset)#````````````````````````````````````````````````````````
     
     row_offset = box_coords[0][0] + in_box_row_offset
     col_offset = box_coords[0][1] + in_box_col_offset
-    
-    background_img.paste(top_img, (col_offset, row_offset))
+#     row_offset = box_coords[0][0]
+#     col_offset = box_coords[0][1]
+
+    background_img.paste(resized_top_img, (col_offset, row_offset))
     return background_img
 
 
@@ -608,45 +614,45 @@ def trim_border_by_path(in_img_path, out_img_path):
 if __name__ == '__main__':
     print('in pil_utils main...')
     
-#     import make_code_card
-#     make_code_card.main()
-    c_l = [ 
-        (90, 155, 213),
-        (69, 234, 113),
-         (243, 62, 203),
-         (237, 224, 68),
-         (56, 79, 247),
-         (181, 163, 123),
-         (53, 212, 251),
-         (167, 88, 216),
-         (111, 193, 121),
-         (219, 107, 83),
-         (149, 155, 155)]
-    
-    
+    import make_code_card
+    make_code_card.main()
+#     c_l = [ 
+#         (90, 155, 213),
+#         (69, 234, 113),
+#          (243, 62, 203),
+#          (237, 224, 68),
+#          (56, 79, 247),
+#          (181, 163, 123),
+#          (53, 212, 251),
+#          (167, 88, 216),
+#          (111, 193, 121),
+#          (219, 107, 83),
+#          (149, 155, 155)]
 #     
-    color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\Picture1.png"
-#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\test.jpg"
-    
-    img = open_img(color_template_path)
-    print()
-    print(get_list_of_colors_in_image(img))
-    print(len(get_list_of_colors_in_image(img)))
-    
-    img = normalize_colors__by_dominant(img, 10)
-    img = normalize_colors__by_l(img, c_l, 10)
-
-    for clr in get_list_of_colors_in_image(img):
-        print('  ', clr)
-    print(len(get_list_of_colors_in_image(img)))
-    
-    
-    
-    for clr in get_list_of_colors_in_image(img):
-        if clr in c_l:
-            img = replace_color(img, clr, (255,255,255))
-        
-    img.show()
+#     
+# #     
+#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\Picture1.png"
+# #     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\test.jpg"
+#     
+#     img = open_img(color_template_path)
+#     print()
+#     print(get_list_of_colors_in_image(img))
+#     print(len(get_list_of_colors_in_image(img)))
+#     
+#     img = normalize_colors__by_dominant(img, 10)
+#     img = normalize_colors__by_l(img, c_l, 10)
+# 
+#     for clr in get_list_of_colors_in_image(img):
+#         print('  ', clr)
+#     print(len(get_list_of_colors_in_image(img)))
+#     
+#     
+#     
+#     for clr in get_list_of_colors_in_image(img):
+#         if clr in c_l:
+#             img = replace_color(img, clr, (255,255,255))
+#         
+#     img.show()
     
 #     im = Image.open(color_template_path)
 #     rgb_im = im.convert('RGB')
