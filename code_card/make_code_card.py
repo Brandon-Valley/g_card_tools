@@ -84,24 +84,27 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
 
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
         
+        # after getting the box coords from the color_template_img, replace all color boxes with background color to make
+        # blank template that will be used to make blank store templates
         def make_new_blank_template(template_type):
-
-#             raise Exception("ERROR: not yet implemented, just make the blank yourself, powerpoint messes with the colors")
             img = pil_utils.open_img(color_template_img_path)
+            
+            # power point likes to add new colors to images so first, need to normalize all colors by dominant - 
+            # meaning that if you have 100 (255, 255, 255) pixels and 50 (255, 255, 254) pixels, replace all with (255, 255, 255)
             img = pil_utils.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
+            
+            # sometimes the new colors added by power point out-number the original colors, so use same method to normalize
+            # all colors in img to the list of box colors
             box_color_l = TEMPLATE_COLORS_DD[template_type].values()
             img = pil_utils.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
             
-            # replace all box colors with white
-#             pcg = pil_utils.get_pixel_color_grid(color_template_img)
-#             normalized_color_template_img = pil_utils.normalize_colors__by_dominant(pcg, 20)
-#             normalized_color_template_img = pil_utils.make_img_from_pixel_color_grid(pcg)
-#             normalized_color_temlate_img = pil_utils.normalize_colors__by_dominant(color_template_img, 10)
-            img = pil_utils.replace_colors(img, box_color_l, (255, 255, 255)) # his does not work!!!!!!!!!!!!!!!!!!!!
+            # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
+            # background color to make blank template that will be used to make blank store templates
+            img = pil_utils.replace_colors(img, box_color_l, (255, 255, 255))
+            
             img.save(blank_template_img_path)
             img.show()
-#             replaced_color_img = pil_utils.replace_all_colors_except(color_template_img, [(0,0,0)], (255,255,255))
-#             replaced_color_img.show()
+
         
             
             
