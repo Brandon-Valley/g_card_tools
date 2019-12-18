@@ -27,7 +27,8 @@ IMAGES_DIR_PATH = G_CARD_TOOLS_BIG_DATA_DIR_PATH + '\\images'
 
 CODE_CARDS_DIR_PATH  = IMAGES_DIR_PATH + '\\code_cards'
 COLOR_BOXES_DIR_PATH = IMAGES_DIR_PATH + '\\color_boxes'
-LOGOS_DIR_PATH       = IMAGES_DIR_PATH + '\\logos'
+OG_LOGOS_DIR_PATH       = IMAGES_DIR_PATH + '\\logos_original'
+TRIMMED_LOGOS_DIR_PATH       = IMAGES_DIR_PATH + '\\logos_trimmed'
 
 
 

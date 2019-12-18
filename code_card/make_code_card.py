@@ -154,15 +154,25 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         
         # add images        
         if 'logo' in TEMPLATE_COLORS_DD[template_type]:
-            logo_img_path = pv.LOGOS_DIR_PATH + '\\' + store_name + '__logo.jpg'
-            fsu.raise_exception_if_object_not_exist(logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + logo_img_path)
+            # if trimmed logo does not exist, make it by trimming original logo img
+            trimmed_logo_img_path = pv.TRIMMED_LOGOS_DIR_PATH + '\\' + store_name + '__trimmed_logo.jpg'
             
-            logo_img = pu.open_img(logo_img_path)
-#             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+            if not fsu.is_file(trimmed_logo_img_path):
+                print('      Trimmed_logo_img does not exist, trimming border of og_logo_img...')
+                og_logo_img_path = pv.OG_LOGOS_DIR_PATH + '\\' + store_name + '__og_logo.jpg'
+                fsu.raise_exception_if_object_not_exist(og_logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + og_logo_img_path)
+                
+                logo_img = pu.open_img(og_logo_img_path)
+                logo_img = pu.trim_border(logo_img)
+                logo_img.save(trimmed_logo_img_path)
+            
+            trimmed_logo_img = pu.open_img(trimmed_logo_img_path)
+                
+            pu.paste_nicely_in_box_coords(trimmed_logo_img, img, box_coords['logo'], 'centered', 'centered')
 
-            img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
-            pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
-        
+#             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
+#             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+#         
         
         
         img.save(blank_template_img_path)
