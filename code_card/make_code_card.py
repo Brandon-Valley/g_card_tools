@@ -203,9 +203,36 @@ def get_template_type_box_coords(template_type):
     return dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type]
 
 
+
+
+
+def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
+    normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
+    blank_template_img_path = get__blank_template_img_path(template_type)
     
+    # after getting the box coords from the color_template_img, replace all color boxes with background color to make
+    # blank template that will be used to make blank store templates
+    def make_new_blank_template(template_type):
+        print('  Making new blank_template_img for type: ', template_type, '...')
+        img = pil_utils.open_img(normalized_color_template_img_path)
+        box_color_l = TEMPLATE_COLORS_DD[template_type].values()
+
+        # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
+        # background color to make blank template that will be used to make blank store templates
+        print('    Replacing box colors with background color, ', BACKGROUND_COLOR, '...')
+        img = pil_utils.replace_colors(img, box_color_l, BACKGROUND_COLOR)
+        
+        print('    Saving new blank_template_img...')
+        img.save(blank_template_img_path)
+        img.show()
+
     
+    if not fsu.is_file(blank_template_img_path):
+        print('  Blank template does not already exist, making one now...')
+        make_new_blank_template(template_type)
     
+    raise Exception('blank template already made, work on this part now')
+
     
 def main():
     store_name = 'jimmey_johns'
@@ -214,9 +241,31 @@ def main():
     value = 25.0
     bonus = False 
     template_type = 'g_card'
+    instruc_type = 'app_or_recipt'
     
-    box_coords = get_template_type_box_coords(template_type)
-    print(box_coords)
+    # get template_type_box_coords from json file
+        # if the json file does not exist, it will be created
+        # if the box_coords are not in the json file, they will be loaded from the normalized_color_template_img
+            # if the normalized_color_template_img does not exist, it will be created from the user-made color_template_img
+    print('  Getting template_type_box_coords...')
+    template_type_box_coords = get_template_type_box_coords(template_type)
+    
+    # if blank_store_template image does not exist, make it
+        # if blank_template_img does not already exist, it will be created in the process
+    print('  Getting blank_store_template_img...')
+    blank_store_template_img_path = get__blank_store_template_img_path(store_name)
+    if not fsu.is_file(blank_store_template_img_path):
+        print('    Blank_store_template_img does not exist, creating it now...')
+        make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_type)
+    blank_store_template_img = pil_utils.open_img(blank_store_template_img_path)
+    
+    
+    blank_store_template_img.show()
+        
+    
+    
+    
+#     print(box_coords)
     
 #     make_new_store_code_card_template('jimmy_johns', 'g_card', [None], instruc_type = 'app_or_recipt')
     
