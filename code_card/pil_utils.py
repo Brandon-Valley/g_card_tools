@@ -84,7 +84,6 @@ def colors_within_normilization_factior(c1, c2, norm_factor):
        abs(c1[1] - c2[1]) <= norm_factor and \
        abs(c1[2] - c2[2]) <= norm_factor and \
        c1 != c2:
-        print('found clr to normalize: ', c1, c2)#```````````````````````````````````````````````````````````````
         return True
     return False
 
@@ -214,7 +213,7 @@ def get_color_occurrence_d_from_pixel_color_grid(pcg):
                 c_occ_d[pixel_color] = 1
     return c_occ_d
     
-# def normalize_pixel_color_grid__by_dominant(pcg, norm_factor = 100):
+# def normalize_colors__by_dominant(pcg, norm_factor = 100):
 #     def colors_within_normilization_factior(c1, c2):
 #         if abs(c1[0] - c2[0]) <= norm_factor and \
 #            abs(c1[1] - c2[1]) <= norm_factor and \
@@ -324,7 +323,7 @@ def replace_colors(img, colors_to_replace_l, replacement_color):
      
      
 ''' will not work right if any 2 colors in color_l will normalize to each other with given norm_factor '''
-def normalize_pixel_color_grid__by_l(img, color_l, norm_factor):
+def normalize_colors__by_l(img, color_l, norm_factor):
 #     pcg = get_pixel_color_grid(img)
     og_clr_l = get_list_of_colors_in_image(img)
     
@@ -341,7 +340,7 @@ def normalize_pixel_color_grid__by_l(img, color_l, norm_factor):
     
      
      
-def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):    
+def normalize_colors__by_dominant(img, norm_factor = 10):    
     pcg = get_pixel_color_grid(img) 
     
     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
@@ -366,60 +365,12 @@ def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):
      
     # after finding the colors to normalize in clr_norm_d, go through and change the colors
     for old_clr, new_clr in clr_norm_d.items():
-#         print('replacing ', old_clr, ' with ', new_clr)#````````````````````````````````````````````````
         img = replace_color(img, old_clr, new_clr)
 
     return img
      
      
      
-     
-     
-#  
-# def normalize_pixel_color_grid__by_dominant(img, norm_factor = 100):
-#     def colors_within_normilization_factior(c1, c2):
-#         if abs(c1[0] - c2[0]) <= norm_factor and \
-#            abs(c1[1] - c2[1]) <= norm_factor and \
-#            abs(c1[2] - c2[2]) <= norm_factor and \
-#            c1 != c2:
-#             return True
-#         return False
-#     
-#     pcg = get_pixel_color_grid(img)
-#     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
-# 
-#     sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
-# #     print(sorted_clr_occ_d)
-#     
-#     
-#     for cur_clr_occ_tup in sorted_clr_occ_d:
-#         print
-#         for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
-# #             print('sfdf'  , cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
-# #             print('fsf' , clr_occ_tup[0])#``````````````````````````````````````````````````````````````````````````````
-# #             print('cur_clr_occ_tup[0]: ', cur_clr_occ_tup[0])#``````````````````````````````````````````````````````````````````````````````
-#             
-#             og_clr = cur_clr_occ_tup[0]
-#             new_clr = clr_occ_tup[0]
-#             if colors_within_normilization_factior(og_clr, new_clr):
-#                 img = replace_color(img, og_clr, new_clr)
-#     
-# #     print(sorted_clr_occ_d)    
-# #     print(len(sorted_clr_occ_d)) 
-#     return img
- 
- 
-#     pcg = get_pixel_color_grid(img)
-#     print(pcg)
-#     
-#     for row_num, row in enumerate(pcg):
-#         
-#         print(row_num)
-#         for col_num, pixel_clr in enumerate(row):
-#             if pixel_clr in colors_to_replace_l:
-#                 pcg[row_num][col_num] = replacement_color
-#     return make_img_from_pixel_color_grid(pcg)      
-    
                 
 
 
@@ -526,18 +477,12 @@ def get_colored_box_corner_coords(img, box_color):
     box_coords = [None, None, None, None]
     rgb_tup_box_color = color_to_rgb_tup(box_color)
     pixel_color_grid = get_pixel_color_grid(img)
-    
-#     print('pixel_color_grid: ', pixel_color_grid)#````````````````````````````````````````````````````````````````
-    
+        
     for row_num, row in enumerate(pixel_color_grid):
-#         print('scanning row #: ', row_num) #``````````````````````````````````````````````````````````````````````
         for col_num, pixel_clr in enumerate(row):
-#             print(rgb_tup_box_color, pixel_clr)#````````````````````````````````````````````````````````````````````````
             
             # found top left pixel of box
             if pixel_clr == rgb_tup_box_color:
-                print('in pil_utils,  found match')#```````````````````````````````````````````````````````````````````````````````
-#                 return#`````````````````````````````````````````````````````````````````````````````````````````````
                 top_left_coords = (row_num, col_num)
                 box_coords[0] = top_left_coords
 
@@ -576,7 +521,6 @@ def get_colored_box_corner_coords(img, box_color):
     
     return False
     
-#     print(pixel_color_grid)
 
 
 
@@ -674,13 +618,9 @@ if __name__ == '__main__':
     print(get_list_of_colors_in_image(img))
     print(len(get_list_of_colors_in_image(img)))
     
-    img = normalize_pixel_color_grid__by_dominant(img, 10)
-    img = normalize_pixel_color_grid__by_l(img, c_l, 10)
-    
-#     img.show()
-    print('after norm')
-#     print(get_list_of_colors_in_image(img))
-    print('colors in normalized img: ')
+    img = normalize_colors__by_dominant(img, 10)
+    img = normalize_colors__by_l(img, c_l, 10)
+
     for clr in get_list_of_colors_in_image(img):
         print('  ', clr)
     print(len(get_list_of_colors_in_image(img)))
@@ -690,14 +630,6 @@ if __name__ == '__main__':
     for clr in get_list_of_colors_in_image(img):
         if clr in c_l:
             img = replace_color(img, clr, (255,255,255))
-    
-#     print('after replacing correct colors with white')
-#     for clr in get_list_of_colors_in_image(img):
-#         print(clr)
-#     for clr in get_list_of_colors_in_image(img):
-#         if clr != 255
-#         img = replace_color(img, clr, (255,0,0))
-#         (90, 154, 215) (90, 155, 213)
         
     img.show()
     
@@ -752,7 +684,7 @@ if __name__ == '__main__':
 #     pcg = get_pixel_color_grid_from_path(color_template_path)
 # 
 #     
-#     norm_bd_pcg = normalize_pixel_color_grid__by_dominant(pcg)
+#     norm_bd_pcg = normalize_colors__by_dominant(pcg)
 #     
 #     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
 # #     print(clr_occ_d)

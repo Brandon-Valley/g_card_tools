@@ -8,6 +8,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..\\..'))
 import file_system_utils as fsu
 import project_vars as pv
 
+COLOR_NORMILIZATION_FACTOR = 10
 TEMPLATE_BOX_COORDS_JSON_PATH = 'template_box_coords.json'
 
 # to get, make img in power point, open in paint, use eye drop tool, click edit colors
@@ -38,9 +39,9 @@ TEMPLATE_DIMS_DIR_PATH = pv.CODE_CARDS_DIR_PATH + '\\' + TEMPLATE_DIMS_STR
 
 
 def make_new_store_code_card_template(store_name, template_type, options_l, instruc_type):
-    blank_store_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__' + store_name    + '.jpg'
-    color_template_img_path       = TEMPLATE_DIMS_DIR_PATH + '\\color_template__'       + template_type + '.JPG'
-    blank_template_img_path       = TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'       + template_type + '.JPG'
+    blank_store_template_img_path = TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__' + store_name    + '.png'
+    color_template_img_path       = TEMPLATE_DIMS_DIR_PATH + '\\color_template__'       + template_type + '.png'
+    blank_template_img_path       = TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'       + template_type + '.png'
     
     def get_template_type_box_coords(template_type):
         # read in data from json file if it exists
@@ -84,23 +85,32 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
         
         def make_new_blank_template(template_type):
+
 #             raise Exception("ERROR: not yet implemented, just make the blank yourself, powerpoint messes with the colors")
-            color_template_img = pil_utils.open_img(color_template_img_path)
+            img = pil_utils.open_img(color_template_img_path)
+            img = pil_utils.normalize_colors__by_dominant(img, COLOR_NORMILIZATION_FACTOR)
+            box_color_l = TEMPLATE_COLORS_DD[template_type].values()
+            img = pil_utils.normalize_colors__by_l(img, box_color_l, COLOR_NORMILIZATION_FACTOR)
             
             # replace all box colors with white
 #             pcg = pil_utils.get_pixel_color_grid(color_template_img)
-#             normalized_color_template_img = pil_utils.normalize_pixel_color_grid__by_dominant(pcg, 20)
+#             normalized_color_template_img = pil_utils.normalize_colors__by_dominant(pcg, 20)
 #             normalized_color_template_img = pil_utils.make_img_from_pixel_color_grid(pcg)
-#             normalized_color_temlate_img = pil_utils.normalize_pixel_color_grid__by_dominant(color_template_img, 10)
-            replaced_color_img = pil_utils.replace_colors(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type].values(), (255, 255, 255)) # his does not work!!!!!!!!!!!!!!!!!!!!
-
+#             normalized_color_temlate_img = pil_utils.normalize_colors__by_dominant(color_template_img, 10)
+            img = pil_utils.replace_colors(img, box_color_l, (255, 255, 255)) # his does not work!!!!!!!!!!!!!!!!!!!!
+            img.save(blank_template_img_path)
+            img.show()
 #             replaced_color_img = pil_utils.replace_all_colors_except(color_template_img, [(0,0,0)], (255,255,255))
-            replaced_color_img.show()
+#             replaced_color_img.show()
+        
             
             
         
         if not fsu.is_file(blank_template_img_path):
+            print('blank template does not already exist, making one now...')
             make_new_blank_template(template_type)
+        else:
+            raise Exception('blank template already made, work on this part now')
         
         
         
