@@ -4,6 +4,7 @@ import pil_utils as pu
 # to import from parent dir 
 import sys, os
 import project_vars
+
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
@@ -58,6 +59,14 @@ def get__blank_store_template_img_path(store_name):         return TEMPLATE_DIMS
 def get__color_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
 def get__normalized_color_template_img_path(template_type): return TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
 def get__blank_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'             + template_type + '.png'
+    
+    
+    
+def read_text_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as text_file:  # can throw FileNotFoundError
+        result = tuple(l.rstrip() for l in text_file.readlines())
+        return result
+    
     
     
 def get_template_type_box_coords(template_type):
@@ -120,7 +129,8 @@ def get_template_type_box_coords(template_type):
 
 def make_new_blank_store_template(box_coords, store_name, template_type, instruc_path):
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
-    blank_template_img_path = get__blank_template_img_path(template_type)
+    blank_template_img_path            = get__blank_template_img_path(template_type)
+    blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
     
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
@@ -135,13 +145,13 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
         # add blank template labels
         box_title_l = TEMPLATE_COLORS_DD[template_type].keys()
         
+
+        
         for box_title in box_title_l:
             if box_title in BLANK_TEMPLATE_LBL_D.keys():
                 lbl_d = BLANK_TEMPLATE_LBL_D[box_title]
-                print('lbl_d: ', lbl_d)
-                print('lbl_d: ', lbl_d['lbl_lines'])
                 lbl_params = lbl_d['param_d']
-                                                       
+                                                        
                 img = pu.write_txt_on_img_in_box_coords(img,                                                           
                                                         box_coords_tup  = box_coords[box_title], 
                                                         lines           = lbl_d['lbl_lines'],
@@ -151,45 +161,88 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
                                                         txt_box_v_align = lbl_params['txt_box_vert_align'],
                                                         txt_h_align     = lbl_params['txt_horz_align'],
                                                         )
-        
-        # add images        
-        if 'logo' in TEMPLATE_COLORS_DD[template_type]:
-            # if trimmed logo does not exist, make it by trimming original logo img
-            trimmed_logo_img_path = pv.TRIMMED_LOGOS_DIR_PATH + '\\' + store_name + '__trimmed_logo.jpg'
-            
-            if not fsu.is_file(trimmed_logo_img_path):
-                print('      Trimmed_logo_img does not exist, trimming border of og_logo_img...')
-                og_logo_img_path = pv.OG_LOGOS_DIR_PATH + '\\' + store_name + '__og_logo.jpg'
-                fsu.raise_exception_if_object_not_exist(og_logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + og_logo_img_path)
-                
-                logo_img = pu.open_img(og_logo_img_path)
-                logo_img = pu.trim_border(logo_img)
-                logo_img.save(trimmed_logo_img_path)
-            
-            trimmed_logo_img = pu.open_img(trimmed_logo_img_path)
-                
-            pu.paste_nicely_in_box_coords(trimmed_logo_img, img, box_coords['logo'], 'centered', 'centered')
-
-#             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
-#             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
-#         
-        
-        
         img.save(blank_template_img_path)
-        img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+#         # fill txt_dd
+#         txt_dd = {}
+#         # add from BLANK_TEMPLATE_LBL_D
+#         for box_title in box_title_l:
+#             if box_title in BLANK_TEMPLATE_LBL_D.keys():
+#                 txt_dd[box_title] = BLANK_TEMPLATE_LBL_D[box_title]
+#                 
+#                 
+#                 
+#                 
+# BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
+#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
+#                 
+#         # add instruc
+#         instruc_txt_d = {'instruc' : {'lbl_lines' : read_text_file()}}
+                
+                
+
+        
+#         # add images        
+#         if 'logo' in TEMPLATE_COLORS_DD[template_type]:
+#             # if trimmed logo does not exist, make it by trimming original logo img
+#             trimmed_logo_img_path = pv.TRIMMED_LOGOS_DIR_PATH + '\\' + store_name + '__trimmed_logo.jpg'
+#             
+#             if not fsu.is_file(trimmed_logo_img_path):
+#                 print('      Trimmed_logo_img does not exist, trimming border of og_logo_img...')
+#                 og_logo_img_path = pv.OG_LOGOS_DIR_PATH + '\\' + store_name + '__og_logo.jpg'
+#                 fsu.raise_exception_if_object_not_exist(og_logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + og_logo_img_path)
+#                 
+#                 logo_img = pu.open_img(og_logo_img_path)
+#                 logo_img = pu.trim_border(logo_img)
+#                 logo_img.save(trimmed_logo_img_path)
+#             
+#             trimmed_logo_img = pu.open_img(trimmed_logo_img_path)
+#                 
+#             pu.paste_nicely_in_box_coords(trimmed_logo_img, img, box_coords['logo'], 'centered', 'centered')
+# 
+# #             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
+# #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+# #         
+#         
+#         
+#         img.save(blank_template_img_path)
+#         img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
 
     
     if not fsu.is_file(blank_template_img_path):
         print('      Blank_template_img does not already exist, creating it now...')
         make_new_blank_template(template_type)
     
-    raise Exception('blank template already made, work on this part now')
+#     raise Exception('blank template already made, work on this part now')
     
+    # make blank_store_template_img
     img = pu.open_img(blank_template_img_path)
     
+    # add images        
+    if 'logo' in TEMPLATE_COLORS_DD[template_type]:
+        # if trimmed logo does not exist, make it by trimming original logo img
+        trimmed_logo_img_path = pv.TRIMMED_LOGOS_DIR_PATH + '\\' + store_name + '__trimmed_logo.jpg'
+         
+        if not fsu.is_file(trimmed_logo_img_path):
+            print('      Trimmed_logo_img does not exist, trimming border of og_logo_img...')
+            og_logo_img_path = pv.OG_LOGOS_DIR_PATH + '\\' + store_name + '__og_logo.jpg'
+            fsu.raise_exception_if_object_not_exist(og_logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + og_logo_img_path)
+             
+            logo_img = pu.open_img(og_logo_img_path)
+            logo_img = pu.trim_border(logo_img)
+            logo_img.save(trimmed_logo_img_path)
+         
+        trimmed_logo_img = pu.open_img(trimmed_logo_img_path)
+             
+        pu.paste_nicely_in_box_coords(trimmed_logo_img, img, box_coords['logo'], 'centered', 'centered')
     
-    
-    
+    #             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
+    #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
+    #         
+    img.save(blank_store_template_img_path)
+#     img.show()
+     
+     
+     
     
     
 
@@ -222,9 +275,10 @@ def main():
         print('    Blank_store_template_img does not exist, creating it now...')
         make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_path)
         
+        
+        
+        
     blank_store_template_img = pu.open_img(blank_store_template_img_path)
-    
-    
     blank_store_template_img.show()
         
     
