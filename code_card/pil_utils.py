@@ -79,6 +79,14 @@ def get_box_coord_dims(box_coords_tup):
     height = box_coords_tup[2][0] - box_coords_tup[0][0]
     return width, height 
 
+def colors_within_normilization_factior(c1, c2, norm_factor):
+    if abs(c1[0] - c2[0]) <= norm_factor and \
+       abs(c1[1] - c2[1]) <= norm_factor and \
+       abs(c1[2] - c2[2]) <= norm_factor and \
+       c1 != c2:
+        print('found clr to normalize: ', c1, c2)#```````````````````````````````````````````````````````````````
+        return True
+    return False
 
 
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -315,17 +323,25 @@ def replace_colors(img, colors_to_replace_l, replacement_color):
     return img
      
      
-     
-def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):
-    def colors_within_normilization_factior(c1, c2):
-        if abs(c1[0] - c2[0]) <= norm_factor and \
-           abs(c1[1] - c2[1]) <= norm_factor and \
-           abs(c1[2] - c2[2]) <= norm_factor and \
-           c1 != c2:
-            print('found clr to normalize: ', c1, c2)#```````````````````````````````````````````````````````````````
-            return True
-        return False
+''' will not work right if any 2 colors in color_l will normalize to each other with given norm_factor '''
+def normalize_pixel_color_grid__by_l(img, color_l, norm_factor):
+#     pcg = get_pixel_color_grid(img)
+    og_clr_l = get_list_of_colors_in_image(img)
     
+    clr_norm_d = {}
+    for dominant_clr in color_l:
+        for og_clr in og_clr_l:
+            if colors_within_normilization_factior(dominant_clr, og_clr, norm_factor):
+                clr_norm_d[og_clr] = dominant_clr
+    
+    for old_clr, new_clr in clr_norm_d.items():
+        img = replace_color(img, old_clr, new_clr)
+        
+    return img
+    
+     
+     
+def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):    
     pcg = get_pixel_color_grid(img) 
     
     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
@@ -337,46 +353,22 @@ def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):
     for clr_occ_tup in sorted_clr_occ_tup_l:
         sorted_clr_l.append(clr_occ_tup[0])
                
-#     # build clr_norm_d 
     clr_norm_d = {}
-#     i = 0
-#     while(i < len(sorted_clr_l)):
-#         print('at top of while loop, size of sorted_clr_l: ', len(sorted_clr_l))#````````````````````````````````````````````````````
-#         more_common_clr
 
     while(len(sorted_clr_l) > 1):
         most_common_color = sorted_clr_l[0]
         
         for less_common_color in sorted_clr_l[1:]:
-            if colors_within_normilization_factior(most_common_color, less_common_color):
+            if colors_within_normilization_factior(most_common_color, less_common_color, norm_factor):
                 clr_norm_d[less_common_color] = most_common_color
                 sorted_clr_l.remove(less_common_color)
         sorted_clr_l.pop(0)
-
-
-
-    
-#     checked_clr_l = []
-#     for more_common_clr_num, more_common_clr in enumerate(sorted_clr_l):
-#         
-#         for less_common_clr_num, less_common_clr in enumerate(sorted_clr_l):
-#             if colors_within_normilization_factior(more_common_clr, less_common_clr):
-#                 clr_norm_d[less_common_clr] = more_common_clr
-#                 sorted_clr_l.pop(less_common_clr_num)
-# #         checked_clr_l.append(more_common_clr)
-# #         sorted_clr_l.remove(more_common_clr)
      
     # after finding the colors to normalize in clr_norm_d, go through and change the colors
-    print('clr_norm_d: ', clr_norm_d)
-#     img2 = img
     for old_clr, new_clr in clr_norm_d.items():
-        print('replacing ', old_clr, ' with ', new_clr)#````````````````````````````````````````````````
+#         print('replacing ', old_clr, ' with ', new_clr)#````````````````````````````````````````````````
         img = replace_color(img, old_clr, new_clr)
-#         img2.show()
-#     print(sorted_clr_occ_d)    
-#     print(len(sorted_clr_occ_d)) 
-#     return make_img_from_pixel_color_grid(pcg)
-#     img2.show()
+
     return img
      
      
@@ -683,6 +675,8 @@ if __name__ == '__main__':
     print(len(get_list_of_colors_in_image(img)))
     
     img = normalize_pixel_color_grid__by_dominant(img, 10)
+    img = normalize_pixel_color_grid__by_l(img, c_l, 10)
+    
 #     img.show()
     print('after norm')
 #     print(get_list_of_colors_in_image(img))
