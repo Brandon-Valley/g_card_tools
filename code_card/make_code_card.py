@@ -84,12 +84,17 @@ def make_new_store_code_card_template(store_name, template_type, options_l, inst
     def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
         
         def make_new_blank_template(template_type):
+#             raise Exception("ERROR: not yet implemented, just make the blank yourself, powerpoint messes with the colors")
             color_template_img = pil_utils.open_img(color_template_img_path)
             
             # replace all box colors with white
-#             replaced_color_img = pil_utils.replace_colors(color_template_img, TEMPLATE_COLORS_DD[template_type].values(), (255, 255, 255)) # his does not work!!!!!!!!!!!!!!!!!!!!
+#             pcg = pil_utils.get_pixel_color_grid(color_template_img)
+#             normalized_color_template_img = pil_utils.normalize_pixel_color_grid__by_dominant(pcg, 20)
+#             normalized_color_template_img = pil_utils.make_img_from_pixel_color_grid(pcg)
+#             normalized_color_temlate_img = pil_utils.normalize_pixel_color_grid__by_dominant(color_template_img, 10)
+            replaced_color_img = pil_utils.replace_colors(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type].values(), (255, 255, 255)) # his does not work!!!!!!!!!!!!!!!!!!!!
 
-            replaced_color_img = pil_utils.replace_all_colors_except(color_template_img, [(0,0,0)], (255,255,255))
+#             replaced_color_img = pil_utils.replace_all_colors_except(color_template_img, [(0,0,0)], (255,255,255))
             replaced_color_img.show()
             
             

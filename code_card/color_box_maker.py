@@ -16,11 +16,11 @@ import project_vars as pv
 
 
 
-h = 50
-w = 300
+h = 1080
+w = 480
 
-fill_color = (255, 255, 255)
-border_color = (0,0,0)
+fill_color = (0, 0, 150)
+border_color = None#(0,0,0)
 border_width = 10
 
 img_save_path = pv.COLOR_BOXES_DIR_PATH + '\\' + str(fill_color) + '__' + str(border_color) + str(w) + 'x' + str(h) + '.jpg'

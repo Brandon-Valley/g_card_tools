@@ -21,7 +21,7 @@ import numpy as np
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
 
 def open_img(path):
-    return Image.open(path) 
+    return Image.open(path).convert('RGB')
 
 # dims: (left, top, right, bottom)
 # dims are the dims needed to make the box to cut out of og img, not how much to trim from each side
@@ -159,7 +159,11 @@ def make_img_from_pixel_color_grid(pixel_color_grid):
     
     for x in range(w):
         for y in range(h):
-            img.putpixel((x,y), pixel_color_grid[y][x])
+#             print(x, y)#`````````````````````````````````````````````````````````````````````````````
+            try:
+                img.putpixel((x,y), pixel_color_grid[y][x])
+            except(IndexError):
+                img.putpixel((x,y), (255, 255, 255))
     return img
     
 def show_pixel_color_grid_as_img(pixel_color_grid):
@@ -202,29 +206,29 @@ def get_color_occurrence_d_from_pixel_color_grid(pcg):
                 c_occ_d[pixel_color] = 1
     return c_occ_d
     
-def normalize_pixel_color_grid__by_dominant(pcg, norm_factor = 100):
-    def colors_within_normilization_factior(c1, c2):
-        if abs(c1[0] - c2[0]) <= norm_factor and \
-           abs(c1[1] - c2[1]) <= norm_factor and \
-           abs(c1[2] - c2[2]) <= norm_factor and \
-           c1 != c2:
-            return True
-        return False
-    
-    clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
-
-    sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
-    print(sorted_clr_occ_d)
-    
-    
-    for cur_clr_occ_tup in sorted_clr_occ_d:
-        for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
-#             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
-            if colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
-                sorted_clr_occ_d.pop(clr_occ_tup_num)
-    
-    print(sorted_clr_occ_d)    
-    print(len(sorted_clr_occ_d))    
+# def normalize_pixel_color_grid__by_dominant(pcg, norm_factor = 100):
+#     def colors_within_normilization_factior(c1, c2):
+#         if abs(c1[0] - c2[0]) <= norm_factor and \
+#            abs(c1[1] - c2[1]) <= norm_factor and \
+#            abs(c1[2] - c2[2]) <= norm_factor and \
+#            c1 != c2:
+#             return True
+#         return False
+#      
+#     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
+#  
+#     sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
+#     print(sorted_clr_occ_d)
+#      
+#      
+#     for cur_clr_occ_tup in sorted_clr_occ_d:
+#         for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
+# #             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
+#             if colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
+#                 sorted_clr_occ_d.pop(clr_occ_tup_num)
+#      
+#     print(sorted_clr_occ_d)    
+#     print(len(sorted_clr_occ_d))    
             
 
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -302,25 +306,102 @@ def replace_all_colors_except(img, colors_to_not_replace_l, replacement_color):
     return img
         
 
-# 
-# ''' if output_img_path == None, will return img, else img is saved and nothing is returned '''
-# def replace_colors(img, colors_to_replace_l, replacement_color):
-# 
+ 
+''' if output_img_path == None, will return img, else img is saved and nothing is returned '''
+def replace_colors(img, colors_to_replace_l, replacement_color):
+    for clr in colors_to_replace_l:
+        img = replace_color(img, clr, replacement_color)
+        
+    return img
+     
+     
+     
+def normalize_pixel_color_grid__by_dominant(img, norm_factor = 10):
+    def colors_within_normilization_factior(c1, c2):
+        if abs(c1[0] - c2[0]) <= norm_factor and \
+           abs(c1[1] - c2[1]) <= norm_factor and \
+           abs(c1[2] - c2[2]) <= norm_factor and \
+           c1 != c2:
+            print('found clr to normalize: ', c1, c2)#```````````````````````````````````````````````````````````````
+            return True
+        return False
+    
+    pcg = get_pixel_color_grid(img) 
+    
+    clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
+  
+    sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
+    print(sorted_clr_occ_d)
+      
+    clr_norm_d = {}
+    for cur_clr_occ_tup in sorted_clr_occ_d:
+#         clr_norm_d[cur_clr_occ_tup[0]] = []
+        for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
+#             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
+            if clr_occ_tup[0] not in clr_norm_d.keys() and colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
+                clr_norm_d[clr_occ_tup[0]] = cur_clr_occ_tup[0]
+                sorted_clr_occ_d.pop(clr_occ_tup_num)
+     
+    # after finding the colors to normalize in clr_norm_d, go through and change the colors
+    print('clr_norm_d: ', clr_norm_d)
+    img2 = img
+    for old_clr, new_clr in clr_norm_d.items():
+        img2 = replace_color(img, old_clr, new_clr)
+#         img2.show()
+#     print(sorted_clr_occ_d)    
+#     print(len(sorted_clr_occ_d)) 
+#     return make_img_from_pixel_color_grid(pcg)
+#     img2.show()
+    return img2
+     
+     
+     
+     
+     
+#  
+# def normalize_pixel_color_grid__by_dominant(img, norm_factor = 100):
+#     def colors_within_normilization_factior(c1, c2):
+#         if abs(c1[0] - c2[0]) <= norm_factor and \
+#            abs(c1[1] - c2[1]) <= norm_factor and \
+#            abs(c1[2] - c2[2]) <= norm_factor and \
+#            c1 != c2:
+#             return True
+#         return False
 #     
+#     pcg = get_pixel_color_grid(img)
+#     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
 # 
-# 
-# 
-# 
-# #     pcg = get_pixel_color_grid(img)
-# #     print(pcg)
-# #     
-# #     for row_num, row in enumerate(pcg):
-# #         
-# #         print(row_num)
-# #         for col_num, pixel_clr in enumerate(row):
-# #             if pixel_clr in colors_to_replace_l:
-# #                 pcg[row_num][col_num] = replacement_color
-# #     return make_img_from_pixel_color_grid(pcg)      
+#     sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
+# #     print(sorted_clr_occ_d)
+#     
+#     
+#     for cur_clr_occ_tup in sorted_clr_occ_d:
+#         print
+#         for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
+# #             print('sfdf'  , cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
+# #             print('fsf' , clr_occ_tup[0])#``````````````````````````````````````````````````````````````````````````````
+# #             print('cur_clr_occ_tup[0]: ', cur_clr_occ_tup[0])#``````````````````````````````````````````````````````````````````````````````
+#             
+#             og_clr = cur_clr_occ_tup[0]
+#             new_clr = clr_occ_tup[0]
+#             if colors_within_normilization_factior(og_clr, new_clr):
+#                 img = replace_color(img, og_clr, new_clr)
+#     
+# #     print(sorted_clr_occ_d)    
+# #     print(len(sorted_clr_occ_d)) 
+#     return img
+ 
+ 
+#     pcg = get_pixel_color_grid(img)
+#     print(pcg)
+#     
+#     for row_num, row in enumerate(pcg):
+#         
+#         print(row_num)
+#         for col_num, pixel_clr in enumerate(row):
+#             if pixel_clr in colors_to_replace_l:
+#                 pcg[row_num][col_num] = replacement_color
+#     return make_img_from_pixel_color_grid(pcg)      
     
                 
 
@@ -551,12 +632,39 @@ def trim_border_by_path(in_img_path, out_img_path):
 if __name__ == '__main__':
     print('in pil_utils main...')
     
-#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__g_card.JPG"
-    color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\Picture1.JPG"
-    save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__g_cardNEW.JPG"
-
+#     import make_code_card
+#     make_code_card.main()
+    
+    
+    
+#     
+    color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\Picture1.png"
+#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\test.jpg"
+    
     img = open_img(color_template_path)
+    print()
     print(get_list_of_colors_in_image(img))
+    print(len(get_list_of_colors_in_image(img)))
+    
+    img = normalize_pixel_color_grid__by_dominant(img, 10)
+    img.show()
+    print('after norm')
+    print(get_list_of_colors_in_image(img))
+    print(len(get_list_of_colors_in_image(img)))
+    
+#     im = Image.open(color_template_path)
+#     rgb_im = im.convert('RGB')
+#     r, g, b = rgb_im.getpixel((1, 1))
+
+# print(r, g, b)
+    
+    
+    
+#     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\Picture1.JPG"
+#     save_img_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__g_cardNEW.JPG"
+# 
+#     img = open_img(color_template_path)
+#     print(get_list_of_colors_in_image(img))
 
 
 # 
@@ -584,8 +692,7 @@ if __name__ == '__main__':
     
     
     
-#     import make_code_card
-#     make_code_card.main()
+
 #     
 #     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__g_card.JPG"
 # #     color_template_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\blue.jpg"
