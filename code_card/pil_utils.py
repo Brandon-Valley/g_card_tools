@@ -436,12 +436,12 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
  
      
     box_w, box_h = get_box_coord_dims(box_coords_tup)
-    print('box_h: ', box_h)#`````````````````````````````````````````````````````````````````````````
+#     print('box_h: ', box_h)#`````````````````````````````````````````````````````````````````````````
 #     print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
      
     # get font size
-    print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
-    print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
+#     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
+#     print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
  
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
  

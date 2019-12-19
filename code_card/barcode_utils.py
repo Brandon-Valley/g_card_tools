@@ -19,7 +19,7 @@ TEMP_BARCODE_PATH_NO_EXT = 'temp'
 TEMP_BARCODE_PATH = TEMP_BARCODE_PATH_NO_EXT + '.png'
    
 
-def make_barcode(code, out_file_path):
+def get_barcode_img(code):
     # make initial bar code
     EAN = barcode.get_barcode_class('ean13')
     ean = EAN(code, writer=ImageWriter())
@@ -28,7 +28,7 @@ def make_barcode(code, out_file_path):
    
    
     # cut down bar code to make it look better
-    def make_barcode_pretty(in_img_path, out_img_path):
+    def make_barcode_pretty(in_img_path):
         def img_to_mat(img):
             return array(img)
          
@@ -59,14 +59,16 @@ def make_barcode(code, out_file_path):
 
         Im = pu.trim_border(Im)
          
-        Im.show()
-        Im.save(out_img_path)
+#         Im.show()
+#         Im.save(out_img_path)
         
         # delete temporary bar code
         fsu.delete_if_exists(TEMP_BARCODE_PATH)
         
+        return Im
         
-    make_barcode_pretty(TEMP_BARCODE_PATH, out_file_path)
+        
+    return make_barcode_pretty(TEMP_BARCODE_PATH)
     # Im.show()
     
     
@@ -74,8 +76,8 @@ def make_barcode(code, out_file_path):
     
     
 if __name__ == '__main__':
-    make_barcode('6050110010041430273', 'barcode.png')
-    
+    img = get_barcode_img('6050110010041430273')
+    img.show()
     
     
     

@@ -1,11 +1,9 @@
 import json_logger
 import pil_utils as pu
+import barcode_utils
 
 # to import from parent dir 
 import sys, os
-import project_vars
-from code_card.pil_utils import write_txt_on_img_in_box_coords
-
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
@@ -251,6 +249,18 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
         
         return txt_dd
         
+    def build_img_dd(kwargs):
+        img_dd = {}
+        
+        
+        if 'main_code' in kwargs.keys():
+            img_dd['barcode'] = {'img' : barcode_utils.get_barcode_img(kwargs['main_code']),
+                                 'horz_align' : 'centered',
+                                 'vert_align' : 'centered'}
+        return img_dd
+            
+        
+        
         
     img = blank_store_template_img
         
@@ -258,6 +268,13 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
     txt_dd = build_txt_dd(kwargs)
     for box_title, txt_d in txt_dd.items():
         img = write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords)
+        
+    # paste imgs to img
+    img_dd = build_img_dd(kwargs)
+    for box_title, img_d in img_dd.items():
+        img = pu.paste_nicely_in_box_coords(img_d['img'], img, box_coords[box_title], img_d['horz_align'], img_d['vert_align'])
+        
+#     img = pu.paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align, vert_align)
         
     return img
 
