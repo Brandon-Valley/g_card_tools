@@ -8,6 +8,8 @@ from copy import deepcopy
 import barcode
 from barcode.writer import ImageWriter
 
+import pil_utils as pu
+
 import sys, os
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) # to import from parent dir
 import file_system_utils as fsu
@@ -52,9 +54,12 @@ def make_barcode(code, out_file_path):
         Im = Image.open(in_img_path)
          
         # cut from up to down
-        Im = cut(Im, 200, 240)
-        Im = cut(Im, 50, 170)
+        Im = cut(Im, 170, 280)
+#         Im = cut(Im, 50, 170)
+
+        Im = pu.trim_border(Im)
          
+        Im.show()
         Im.save(out_img_path)
         
         # delete temporary bar code
@@ -65,7 +70,7 @@ def make_barcode(code, out_file_path):
     # Im.show()
     
     
-    
+#     523x280
     
     
 if __name__ == '__main__':
