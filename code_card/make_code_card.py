@@ -19,19 +19,19 @@ TEMPLATE_BOX_COORDS_JSON_PATH = 'template_box_coords.json'
 
 # to get, make img in power point, open in paint, use eye drop tool, click edit colors
 TEMPLATE_COLORS_DD = {
-                        'g_card': {
-                                    'logo'      : (90, 155, 213),
-                                    'barcode'   : (69, 234, 113),
-                                    'main_code' : (243, 62, 203),
-                                    'instruc'   : (237, 224, 68),
-                                    'pin_lbl'   : (56, 79, 247),
-                                    'biz_id_lbl': (181, 163, 123),
-                                    'pin'       : (53, 212, 251),
-                                    'biz_id'    : (167, 88, 216),
-                                    'bonus_msg' : (111, 193, 121),
-                                    'extra'     : (219, 107, 83),
-                                    'value'     : (149, 155, 155)
-                                  }
+                        'g_card_pin_biz_id': {
+                                                'logo'      : (90, 155, 213),
+                                                'barcode'   : (69, 234, 113),
+                                                'main_code' : (243, 62, 203),
+                                                'instruc'   : (237, 224, 68),
+                                                'pin_lbl'   : (56, 79, 247),
+                                                'biz_id_lbl': (181, 163, 123),
+                                                'pin'       : (53, 212, 251),
+                                                'biz_id'    : (167, 88, 216),
+                                                'bonus_msg' : (111, 193, 121),
+                                                'extra'     : (219, 107, 83),
+                                                'value'     : (149, 155, 155)
+                                              }
                      }
 
 CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
@@ -46,9 +46,9 @@ INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
                               'txt_horz_align'    : 'centered',
                              }
 
-BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
+BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'txt_lines' : ['  Pin:  '],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-                        'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
+                        'biz_id_lbl': {'txt_lines' : ['Business', 'ID:'],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
 
 
@@ -132,7 +132,7 @@ def get_template_type_box_coords(template_type):
 
 
 
-def make_new_blank_store_template(box_coords, store_name, template_type, instruc_path):
+def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     blank_template_img_path            = get__blank_template_img_path(template_type)
     blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
@@ -148,7 +148,7 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
 #                                                 box_coords_tup  = [[509, 19], [509, 472], [660, 19], [660, 472]], 
 # [[671, 247], [671, 471], [671, 247], [671, 471]]
 # [[671, 20], [671, 243], [769, 20], [769, 243]]
-                                                lines           = txt_d['lbl_lines'],
+                                                lines           = txt_d['txt_lines'],
                                                 txt_color       = txt_param_d['color'],
                                                 font_path       = FONT_PATH,
                                                 txt_box_h_align = txt_param_d['txt_box_horz_align'],
@@ -192,7 +192,8 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     
 
     # add instruc
-    instruc_txt_d = {'lbl_lines' : read_text_file(instruc_path),
+    instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + instruc_type + '.txt'
+    instruc_txt_d = {'txt_lines' : read_text_file(instruc_path),
                      'param_d'   : INSTRUC_PARAM_D}
     write_txt_d_to_img_in_box_coords(img, 'instruc', instruc_txt_d, box_coords)
     
@@ -225,18 +226,28 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
      
      
      
-    
-    
+def make_new_code_card(template_type_box_coords, blank_store_template_img_path, kwargs):
+    pass
 
     
 def main():
-    store_name = 'jimmy_johns'
-    main_code_str = '6050110010041436106' 
-    pin_str = '953'
-    value = 25.0
-    bonus = False 
-    template_type = 'g_card'
-    instruc_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\txt\\instruction_txt\\add_code_or_receipt.txt"
+    
+    kwargs = {'store_name'    : 'jimmy_johns',
+              'main_code'     : '6050110010041436106',
+              'pin'           : '953',
+              'value'         : '25',
+              'bonus'         : False,
+              'template_type' : 'g_card_pin_biz_id',
+              'instruc_type'  :  'add_code_or_receipt'
+              }
+    
+#     store_name = 'jimmy_johns'
+#     main_code_str = '6050110010041436106' 
+#     pin_str = '953'
+#     value = 25.0
+#     bonus = False 
+#     template_type = 'g_card'
+#     instruc_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\txt\\instruction_txt\\add_code_or_receipt.txt"
     
     
     # get template_type_box_coords from json file
@@ -244,18 +255,18 @@ def main():
         # if the box_coords are not in the json file, they will be loaded from the normalized_color_template_img
             # if the normalized_color_template_img does not exist, it will be created from the user-made color_template_img
     print('  Getting template_type_box_coords...')
-    template_type_box_coords = get_template_type_box_coords(template_type)
+    template_type_box_coords = get_template_type_box_coords(kwargs['template_type'])
     
      
     # get blank_store_template_img from path
         # if blank_store_template image does not exist, make it
             # if blank_template_img does not already exist, it will be created in the process
     print('  Getting blank_store_template_img...')
-    blank_store_template_img_path = get__blank_store_template_img_path(store_name)
+    blank_store_template_img_path = get__blank_store_template_img_path(kwargs['store_name'])
      
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
-        make_new_blank_store_template(template_type_box_coords, store_name, template_type, instruc_path)
+        make_new_blank_store_template(template_type_box_coords, kwargs['store_name'], kwargs['template_type'], kwargs['instruc_type'])
          
          
          

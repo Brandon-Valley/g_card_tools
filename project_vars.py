@@ -8,6 +8,8 @@ import file_system_utils as fsu
 #  |   |-- g_card_tools
 #  |       |-- project_vars.json
 #  |       |-- fonts
+#  |       |-- txt
+#  |           |-- instruction_txt
 #  |  
 #  |   |-- g_card_tools_big_data
 #  |       |-- images
@@ -21,7 +23,10 @@ import file_system_utils as fsu
 G_CARD_TOOLS_DIR_PATH = fsu.get_path_to_current_file(__file__)
 G_CARD_TOOLS_BIG_DATA_DIR_PATH = fsu.get_parent_dir_from_path(G_CARD_TOOLS_DIR_PATH) + '\\g_card_tools_big_data'
 
-FONTS_DIR_PATH = G_CARD_TOOLS_DIR_PATH + '//fonts'
+FONTS_DIR_PATH = G_CARD_TOOLS_DIR_PATH + '\\fonts'
+TXT_DIR_PATH   = G_CARD_TOOLS_DIR_PATH + '\\txt'
+
+INSTRUC_TXT_DIR_PATH = TXT_DIR_PATH + '\\instruction_txt'
 
 IMAGES_DIR_PATH = G_CARD_TOOLS_BIG_DATA_DIR_PATH + '\\images'
 
