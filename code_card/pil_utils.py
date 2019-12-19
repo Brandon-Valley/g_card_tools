@@ -241,29 +241,7 @@ def get_color_occurrence_d_from_pixel_color_grid(pcg):
                 c_occ_d[pixel_color] = 1
     return c_occ_d
     
-# def normalize_colors__by_dominant(pcg, norm_factor = 100):
-#     def colors_within_normilization_factior(c1, c2):
-#         if abs(c1[0] - c2[0]) <= norm_factor and \
-#            abs(c1[1] - c2[1]) <= norm_factor and \
-#            abs(c1[2] - c2[2]) <= norm_factor and \
-#            c1 != c2:
-#             return True
-#         return False
-#      
-#     clr_occ_d = get_color_occurrence_d_from_pixel_color_grid(pcg)
-#  
-#     sorted_clr_occ_d = sorted(clr_occ_d.items(), key=lambda clr_occ_d: clr_occ_d[1], reverse = True)
-#     print(sorted_clr_occ_d)
-#      
-#      
-#     for cur_clr_occ_tup in sorted_clr_occ_d:
-#         for clr_occ_tup_num, clr_occ_tup in enumerate(sorted_clr_occ_d):
-# #             print(cur_clr_occ_tup, clr_occ_tup)#``````````````````````````````````````````````````````````````````````````````
-#             if colors_within_normilization_factior(cur_clr_occ_tup[0], clr_occ_tup[0]):
-#                 sorted_clr_occ_d.pop(clr_occ_tup_num)
-#      
-#     print(sorted_clr_occ_d)    
-#     print(len(sorted_clr_occ_d))    
+  
             
 
 ''' vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv '''
@@ -446,6 +424,8 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path, txt_box_h_align, txt_box_v_align, txt_h_align):
+    if type(lines) != list:
+        raise Exception('ERROR:  lines must be type list, is type: ', type(lines), '  lines: ', lines)
     # get final aspect ratio
     longest_line_len = len(max(lines, key=len))
 #     lines_aspect_ratio = longest_line_len / len(lines)
@@ -473,9 +453,9 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
      
 #     print('offsets, x, y: ', x_txt_box_align_offset, y_txt_box_align_offset)#```````````````````````````````````````````````````````````````````````
  
-    print('in write, about to get font')#`````````````````````````````````````````````````````````````````````````````````````````````
+#     print('in write, about to get font')#`````````````````````````````````````````````````````````````````````````````````````````````
     font = load_font_of_height(font_path, font_h)
-    print('in write, got font')#`````````````````````````````````````````````````````````````````````````````````````````````
+#     print('in write, got font')#`````````````````````````````````````````````````````````````````````````````````````````````
 
      
     draw = ImageDraw.Draw(img)
@@ -483,7 +463,7 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
 #     print('probably correct char_h: ', char_h, 'w: ', char_w) #````````````````````````````````````````````````````````````````````````````````````
     Image.MAX_IMAGE_PIXELS = 1000000000   #need this here
       
-    print('in write, about to start writing')#``````````````````````````````````````````````````````````````````````````
+#     print('in write, about to start writing')#``````````````````````````````````````````````````````````````````````````
       
     longest_line_w = char_w * longest_line_len
     for line_num, line in enumerate(lines):
@@ -561,9 +541,7 @@ def get_colored_box_corner_coords(img, box_color):
 
 ''' returns img after it resizes and pastes top_img onto background_img inside tuple of coords that forms a box 
     box_coords: (top_right, top_left, bottom_right, bottom_left) '''
-def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):
-#     print('in paste_nicely, box_coords: ', box_coords)#````````````````````````````````````````````````````````````````````````````````
-    
+def paste_nicely_in_box_coords(top_img, background_img, box_coords, horz_align = 'centered', vert_align = 'centered'):    
     # resize top img to fit in box coords
     box_width, box_height = get_box_coord_dims(box_coords)
     resized_top_img = shrink_img_to_fit_dims(top_img, box_width, box_height)

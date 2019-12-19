@@ -4,6 +4,7 @@ import pil_utils as pu
 # to import from parent dir 
 import sys, os
 import project_vars
+from code_card.pil_utils import write_txt_on_img_in_box_coords
 
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
@@ -132,6 +133,30 @@ def get_template_type_box_coords(template_type):
 
 
 
+
+def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
+    txt_param_d = txt_d['param_d']
+#         print('in write_txt_d_to_img, txt_d: ', txt_d)#``````````````````````````````````````````````````````````````````````````````````
+    print(box_title)#```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    print('box_coords[box_title]: ', box_coords[box_title])#``````````````````````````````````````````````````````````
+    img = pu.write_txt_on_img_in_box_coords(img,                                                           
+                                            box_coords_tup  = box_coords[box_title], # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#                                                 box_coords_tup  = [[509, 19], [509, 472], [660, 19], [660, 472]], 
+# [[671, 247], [671, 471], [671, 247], [671, 471]]
+# [[671, 20], [671, 243], [769, 20], [769, 243]]
+                                            lines           = txt_d['txt_lines'],
+                                            txt_color       = txt_param_d['color'],
+                                            font_path       = FONT_PATH,
+                                            txt_box_h_align = txt_param_d['txt_box_horz_align'],
+                                            txt_box_v_align = txt_param_d['txt_box_vert_align'],
+                                            txt_h_align     = txt_param_d['txt_horz_align'],
+                                            )
+#         print('about to return img')#``````````````````````````````````````````````````````````````````````````````````````````````
+    return img
+
+
+
+
 def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     blank_template_img_path            = get__blank_template_img_path(template_type)
@@ -139,24 +164,7 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     
     
 
-    def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
-        txt_param_d = txt_d['param_d']
-        print('in write_txt_d_to_img, txt_d: ', txt_d)#``````````````````````````````````````````````````````````````````````````````````
-        print('box_coords[box_title]: ', box_coords[box_title])#``````````````````````````````````````````````````````````
-        img = pu.write_txt_on_img_in_box_coords(img,                                                           
-                                                box_coords_tup  = box_coords[box_title], 
-#                                                 box_coords_tup  = [[509, 19], [509, 472], [660, 19], [660, 472]], 
-# [[671, 247], [671, 471], [671, 247], [671, 471]]
-# [[671, 20], [671, 243], [769, 20], [769, 243]]
-                                                lines           = txt_d['txt_lines'],
-                                                txt_color       = txt_param_d['color'],
-                                                font_path       = FONT_PATH,
-                                                txt_box_h_align = txt_param_d['txt_box_horz_align'],
-                                                txt_box_v_align = txt_param_d['txt_box_vert_align'],
-                                                txt_h_align     = txt_param_d['txt_horz_align'],
-                                                )
-        print('about to return img')#``````````````````````````````````````````````````````````````````````````````````````````````
-        return img
+
     
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
@@ -225,9 +233,42 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     img.save(blank_store_template_img_path)
      
      
-     
-def make_new_code_card(template_type_box_coords, blank_store_template_img_path, kwargs):
-    pass
+        
+def make_new_code_card(kwargs, box_coords, blank_store_template_img):
+    def build_txt_dd(kwargs):
+        txt_dd = {}
+        
+        default_txt_d_setup_box_title_l = ['main_code', 'pin']
+        for box_title in default_txt_d_setup_box_title_l:
+            if box_title in kwargs.keys():
+                txt_dd[box_title] = {'txt_lines' : [kwargs[box_title]],
+                                     'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+            
+        box_title = 'value'
+        if box_title in kwargs.keys():
+            txt_dd[box_title] = {'txt_lines' : ['Value: $' + kwargs[box_title]],
+                                 'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+        
+        return txt_dd
+        
+        
+    img = blank_store_template_img
+        
+    # write txt to img
+    txt_dd = build_txt_dd(kwargs)
+    for box_title, txt_d in txt_dd.items():
+        img = write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords)
+        
+    return img
+
+
+    
+    
+    
+    
+    
+    
+    
 
     
 def main():
@@ -240,15 +281,6 @@ def main():
               'template_type' : 'g_card_pin_biz_id',
               'instruc_type'  :  'add_code_or_receipt'
               }
-    
-#     store_name = 'jimmy_johns'
-#     main_code_str = '6050110010041436106' 
-#     pin_str = '953'
-#     value = 25.0
-#     bonus = False 
-#     template_type = 'g_card'
-#     instruc_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\txt\\instruction_txt\\add_code_or_receipt.txt"
-    
     
     # get template_type_box_coords from json file
         # if the json file does not exist, it will be created
@@ -272,8 +304,11 @@ def main():
          
          
     blank_store_template_img = pu.open_img(blank_store_template_img_path)
-    blank_store_template_img.show()
-         
+#     blank_store_template_img.show()
+    
+    print('  Making new code_card_img...')
+    code_card_img = make_new_code_card(kwargs, template_type_box_coords, blank_store_template_img)
+    code_card_img.show()
      
      
      
