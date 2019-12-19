@@ -637,10 +637,10 @@ if __name__ == '__main__':
     import make_code_card
     make_code_card.main()
 
-#     img = open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
-# #     img = replace_color(img, (181, 163, 123), (255,0,0))
-# #     img.show()
-#     print(get_box_coords_d(img, {'sfsd': (181, 163, 123)}))
+    img = open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
+#     img = replace_color(img, (181, 163, 123), (255,0,0))
+#     img.show()
+    print(get_box_coords_d(img, {'sfsd': (181, 163, 123)}))
 
 
 

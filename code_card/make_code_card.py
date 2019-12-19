@@ -48,7 +48,7 @@ INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
 
 BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-                        'biz_id_lbl': {'lbl_lines' : ['Business', 'ID:'],
+                        'biz_id_lbl': {'lbl_lines' : ['Busines', 'ID:'],
                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
 
 
@@ -182,45 +182,6 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
                                                 
         img.save(blank_template_img_path)
 
-#                 
-#                 
-#                 
-#                 
-# BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
-#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-#                 
-#         # add instruc
-#         instruc_txt_d = {'instruc' : {'lbl_lines' : read_text_file()}}
-                
-                
-
-        
-#         # add images        
-#         if 'logo' in TEMPLATE_COLORS_DD[template_type]:
-#             # if trimmed logo does not exist, make it by trimming original logo img
-#             trimmed_logo_img_path = pv.TRIMMED_LOGOS_DIR_PATH + '\\' + store_name + '__trimmed_logo.jpg'
-#             
-#             if not fsu.is_file(trimmed_logo_img_path):
-#                 print('      Trimmed_logo_img does not exist, trimming border of og_logo_img...')
-#                 og_logo_img_path = pv.OG_LOGOS_DIR_PATH + '\\' + store_name + '__og_logo.jpg'
-#                 fsu.raise_exception_if_object_not_exist(og_logo_img_path, 'ERROR:  Logo img for ' + store_name + ' does not exist at ' + og_logo_img_path)
-#                 
-#                 logo_img = pu.open_img(og_logo_img_path)
-#                 logo_img = pu.trim_border(logo_img)
-#                 logo_img.save(trimmed_logo_img_path)
-#             
-#             trimmed_logo_img = pu.open_img(trimmed_logo_img_path)
-#                 
-#             pu.paste_nicely_in_box_coords(trimmed_logo_img, img, box_coords['logo'], 'centered', 'centered')
-# 
-# #             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
-# #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
-# #         
-#         
-#         
-#         img.save(blank_template_img_path)
-#         img.show()#````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
-
     
     if not fsu.is_file(blank_template_img_path):
         print('      Blank_template_img does not already exist, creating it now...')
@@ -229,10 +190,7 @@ def make_new_blank_store_template(box_coords, store_name, template_type, instruc
     # make blank_store_template_img
     img = pu.open_img(blank_template_img_path)
     
-    
-#     BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'lbl_lines' : ['  Pin:  '],
-#                                        'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
-    
+
     # add instruc
     instruc_txt_d = {'lbl_lines' : read_text_file(instruc_path),
                      'param_d'   : INSTRUC_PARAM_D}
