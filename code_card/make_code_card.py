@@ -9,8 +9,15 @@ sys.path.insert(1, os.path.join(sys.path[0], '..\\..'))
 import file_system_utils as fsu
 import project_vars as pv
 
-FONT_NAME = 'SourceCodePro-Semibold'
-FONT_PATH = pv.FONTS_DIR_PATH + '\\' + FONT_NAME + '.ttf'
+# FONT_NAME = 'SourceCodePro-Semibold'
+# FONT_NAME = 'SourceCodePro-Bold'#
+# FONT_NAME = 'Consolas'#
+# FONT_NAME = 'cour'
+# FONT_NAME = 'Everson Mono Bold'
+# FONT_NAME = 'Everson Mono'
+# FONT_NAME = 'LiberationMono-Bold'#
+# FONT_NAME = ''
+# FONT_PATH = pv.FONTS_DIR_PATH + '\\' + FONT_NAME + '.ttf'
 
 BACKGROUND_COLOR = (255, 255, 255)
 COLOR_NORMILIZATION_FACTOR = 10
@@ -34,12 +41,14 @@ TEMPLATE_COLORS_DD = {
                      }
 
 CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
+                              'font_name'         : 'LiberationMono-Bold',
                               'txt_box_horz_align': 'centered',
                               'txt_box_vert_align': 'top',
                               'txt_horz_align'    : 'centered',
                             }
 
 INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
+                              'font_name'         : 'Consolas',
                               'txt_box_horz_align': 'centered',
                               'txt_box_vert_align': 'centered',
                               'txt_horz_align'    : 'centered',
@@ -141,7 +150,7 @@ def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
                                             box_coords_tup  = box_coords[box_title], 
                                             lines           = txt_d['txt_lines'],
                                             txt_color       = txt_param_d['color'],
-                                            font_path       = FONT_PATH,
+                                            font_path       = pv.FONTS_DIR_PATH + '\\' + txt_param_d['font_name'] + '.ttf',
                                             txt_box_h_align = txt_param_d['txt_box_horz_align'],
                                             txt_box_v_align = txt_param_d['txt_box_vert_align'],
                                             txt_h_align     = txt_param_d['txt_horz_align'],
@@ -304,24 +313,22 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
 
     
     
+def make_code_card(kwargs, TEST_MODE):
     
+    if TEST_MODE:
+        # remove the needed box coords from the json file if it exists
+        if fsu.is_file(TEMPLATE_BOX_COORDS_JSON_PATH):
+            dim_template_box_coords_ddd = json_logger.read(TEMPLATE_BOX_COORDS_JSON_PATH)
     
-    
-    
-    
+            if TEMPLATE_DIMS_STR in dim_template_box_coords_ddd:
+                dim_template_box_coords_ddd.pop(TEMPLATE_DIMS_STR)
+            
+                json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
+                
+    raise Exception("WAIT HERE")
 
+            
     
-def main():
-    
-    kwargs = {'store_name'    : 'jimmy_johns',
-              'main_code'     : '6050110010041436106',
-              'pin'           : '953',
-              'biz_id'        : '66276',
-              'value'         : '25',
-              'bonus'         : False,
-              'template_type' : 'g_card_pin_biz_id',
-              'instruc_type'  : 'add_code_or_receipt'
-              }
     
     # get template_type_box_coords from json file
         # if the json file does not exist, it will be created
@@ -348,8 +355,28 @@ def main():
 #     blank_store_template_img.show()
     
     print('  Making new code_card_img...')
-    code_card_img = make_new_code_card(kwargs, template_type_box_coords, blank_store_template_img)
+    return make_new_code_card(kwargs, template_type_box_coords, blank_store_template_img)
+    
+    
+    
+
+    
+def main():
+    TEST_MODE = True
+    
+    kwargs = {'store_name'    : 'jimmy_johns',
+              'main_code'     : '6050110010041436106',
+              'pin'           : '953',
+              'biz_id'        : '66276',
+              'value'         : '25',
+              'bonus'         : False,
+              'template_type' : 'g_card_pin_biz_id',
+              'instruc_type'  : 'add_code_or_receipt'
+              }
+    
+    code_card_img = make_code_card(kwargs, TEST_MODE)
     code_card_img.show()
+#     code_card_img.save(pv.CODE_CARDS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png')
      
      
      
