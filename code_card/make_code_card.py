@@ -40,10 +40,17 @@ TEMPLATE_COLORS_DD = {
                                               }
                      }
 
-CENTERED_BLACK_LBL_PARAM_D = {'color'             : (0, 0, 0),
+CT_BLACK_LBL_PARAM_D = {      'color'             : (0, 0, 0),
                               'font_name'         : 'LiberationMono-Bold',
                               'txt_box_horz_align': 'centered',
                               'txt_box_vert_align': 'top',
+                              'txt_horz_align'    : 'centered',
+                            }
+
+CC_BLACK_LBL_PARAM_D = {      'color'             : (0, 0, 0),
+                              'font_name'         : 'LiberationMono-Bold',
+                              'txt_box_horz_align': 'centered',
+                              'txt_box_vert_align': 'centered',
                               'txt_horz_align'    : 'centered',
                             }
 
@@ -55,9 +62,9 @@ INSTRUC_PARAM_D            = {'color'             : (101, 101, 101), # grey
                              }
 
 BLANK_TEMPLATE_LBL_D = {'pin_lbl'   : {'txt_lines' : ['  Pin:  '],
-                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D},
+                                       'param_d'   : CT_BLACK_LBL_PARAM_D},
                         'biz_id_lbl': {'txt_lines' : ['Business', 'ID:'],
-                                       'param_d'   : CENTERED_BLACK_LBL_PARAM_D}}
+                                       'param_d'   : CT_BLACK_LBL_PARAM_D}}
 
 
 
@@ -200,9 +207,6 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
         print('        Writing labels to blank_template_img...')
         for box_title in box_title_l:
             if box_title in BLANK_TEMPLATE_LBL_D.keys():
-                print('witing titl')
-#                 lbl_d = BLANK_TEMPLATE_LBL_D[box_title]
-#                 lbl_params = lbl_d['param_d']
                 img = write_txt_d_to_img_in_box_coords(img, box_title, BLANK_TEMPLATE_LBL_D[box_title], box_coords)
                                                 
         img.save(blank_template_img_path)
@@ -223,7 +227,7 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
         box_title = 'biz_id' 
         if str_in_keys_of_all(box_title, [kwargs, box_coords]):
             txt_dd[box_title] = {'txt_lines' : [kwargs['biz_id']],
-                                 'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+                                 'param_d'   : CC_BLACK_LBL_PARAM_D}
     
         return txt_dd
 
@@ -277,12 +281,12 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
         for box_title in default_txt_d_setup_box_title_l:
             if str_in_keys_of_all(box_title, [kwargs, box_coords]):
                 txt_dd[box_title] = {'txt_lines' : [kwargs[box_title]],
-                                     'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+                                     'param_d'   : CC_BLACK_LBL_PARAM_D}
             
         box_title = 'value'
         if str_in_keys_of_all(box_title, [kwargs, box_coords]):
             txt_dd[box_title] = {'txt_lines' : ['Value: $' + kwargs[box_title]],
-                                 'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+                                 'param_d'   : CC_BLACK_LBL_PARAM_D}
         
         return txt_dd
         
@@ -387,7 +391,7 @@ def make_code_card(kwargs, test_mode):
 
     
 def main():
-    TEST_MODE = True
+    TEST_MODE = False
     
     kwargs = {'store_name'    : 'jimmy_johns',
               'main_code'     : '6050110010041436106',
