@@ -314,6 +314,10 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
     
     
 def make_code_card(kwargs, TEST_MODE):
+    template_type = kwargs['template_type']
+    store_name = kwargs['store_name']
+    
+    
     
     if TEST_MODE:
         # remove the needed box coords from the json file if it exists
@@ -325,7 +329,15 @@ def make_code_card(kwargs, TEST_MODE):
             
                 json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
                 
-    raise Exception("WAIT HERE")
+        # remove imgs so they get re-made
+        img_paths_to_delete_l = [get__normalized_color_template_img_path(template_type),
+                                 get__blank_template_img_path(template_type),
+                                 get__blank_store_template_img_path(store_name)]
+        
+        for img_path in img_paths_to_delete_l:
+            fsu.delete_if_exists(img_path)
+            
+            
 
             
     
@@ -335,14 +347,14 @@ def make_code_card(kwargs, TEST_MODE):
         # if the box_coords are not in the json file, they will be loaded from the normalized_color_template_img
             # if the normalized_color_template_img does not exist, it will be created from the user-made color_template_img
     print('  Getting template_type_box_coords...')
-    template_type_box_coords = get_template_type_box_coords(kwargs['template_type'])
+    template_type_box_coords = get_template_type_box_coords(template_type)
     
      
     # get blank_store_template_img from path
         # if blank_store_template image does not exist, make it
             # if blank_template_img does not already exist, it will be created in the process
     print('  Getting blank_store_template_img...')
-    blank_store_template_img_path = get__blank_store_template_img_path(kwargs['store_name'])
+    blank_store_template_img_path = get__blank_store_template_img_path(store_name)
      
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
