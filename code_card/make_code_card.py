@@ -68,12 +68,14 @@ TEMPLATE_DIMS_STR = str(TEMPLATE_DIMS[0]) + 'x' + str(TEMPLATE_DIMS[1])
 TEMPLATE_DIMS_DIR_PATH = pv.CODE_CARDS_DIR_PATH + '\\' + TEMPLATE_DIMS_STR
     
 
-def get__blank_store_template_img_path(store_name):         return TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
 def get__color_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\color_template__'             + template_type + '.png'
 def get__normalized_color_template_img_path(template_type): return TEMPLATE_DIMS_DIR_PATH + '\\color_template__normalized__' + template_type + '.png'
 def get__blank_template_img_path(template_type):            return TEMPLATE_DIMS_DIR_PATH + '\\blank_template__'             + template_type + '.png'
-    
-    
+def get__blank_store_template_img_path(store_name):         return TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png'
+
+def get__test_mode_blank_template_img_path(template_type):    return TEMPLATE_DIMS_DIR_PATH + '\\blank_template_TEST_MODE__'       + template_type + '.png'
+def get__test_mode_blank_store_template_img_path(store_name): return TEMPLATE_DIMS_DIR_PATH + '\\blank_store_template_TEST_MODE__' + store_name    + '.png'
+
     
 def read_text_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as text_file:  # can throw FileNotFoundError
@@ -165,13 +167,18 @@ def write_txt_dd_to_img(img, txt_dd, template_type_box_coords):
 
 
 
-def make_new_blank_store_template(kwargs, box_coords):
+def make_new_blank_store_template(kwargs, box_coords, test_mode):
     store_name    = kwargs['store_name']
     template_type = kwargs['template_type']
     
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
-    blank_template_img_path            = get__blank_template_img_path(template_type)
-    blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
+    
+    if test_mode:
+        blank_template_img_path            = get__blank_template_img_path(template_type)
+        blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
+    else:
+        blank_template_img_path            = get__blank_template_img_path(template_type)
+        blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
     
     
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
@@ -182,7 +189,8 @@ def make_new_blank_store_template(kwargs, box_coords):
 
         # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
         # background color to make blank template that will be used to make blank store templates
-        img = pu.replace_colors(img, box_color_l, BACKGROUND_COLOR)
+        if not test_mode:
+            img = pu.replace_colors(img, box_color_l, BACKGROUND_COLOR)
         
         # add blank template labels
         box_title_l = TEMPLATE_COLORS_DD[template_type].keys()
@@ -313,13 +321,13 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
 
     
     
-def make_code_card(kwargs, TEST_MODE):
+def make_code_card(kwargs, test_mode):
     template_type = kwargs['template_type']
     store_name = kwargs['store_name']
     
     
     
-    if TEST_MODE:
+    if test_mode:
         # remove the needed box coords from the json file if it exists
         if fsu.is_file(TEMPLATE_BOX_COORDS_JSON_PATH):
             dim_template_box_coords_ddd = json_logger.read(TEMPLATE_BOX_COORDS_JSON_PATH)
@@ -337,10 +345,6 @@ def make_code_card(kwargs, TEST_MODE):
         for img_path in img_paths_to_delete_l:
             fsu.delete_if_exists(img_path)
             
-            
-
-            
-    
     
     # get template_type_box_coords from json file
         # if the json file does not exist, it will be created
@@ -358,7 +362,7 @@ def make_code_card(kwargs, TEST_MODE):
      
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
-        make_new_blank_store_template(kwargs, template_type_box_coords )
+        make_new_blank_store_template(kwargs, template_type_box_coords, test_mode)
          
          
          
