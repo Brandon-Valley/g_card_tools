@@ -146,16 +146,19 @@ def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
                                             txt_box_v_align = txt_param_d['txt_box_vert_align'],
                                             txt_h_align     = txt_param_d['txt_horz_align'],
                                             )
-#         print('about to return img')#``````````````````````````````````````````````````````````````````````````````````````````````
     return img
 
+
+def write_txt_dd_to_img(img, txt_dd, template_type_box_coords):
+    for box_title, txt_d in txt_dd.items():
+        img = write_txt_d_to_img_in_box_coords(img, box_title, txt_d, template_type_box_coords)
+    return img
 
 
 
 def make_new_blank_store_template(kwargs, box_coords):
     store_name    = kwargs['store_name']
     template_type = kwargs['template_type']
-    instruc_type  = kwargs['instruc_type']
     
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     blank_template_img_path            = get__blank_template_img_path(template_type)
@@ -185,6 +188,27 @@ def make_new_blank_store_template(kwargs, box_coords):
                 img = write_txt_d_to_img_in_box_coords(img, box_title, BLANK_TEMPLATE_LBL_D[box_title], box_coords)
                                                 
         img.save(blank_template_img_path)
+        
+        
+    def build_txt_dd(kwargs):    
+        txt_dd = {}
+       
+        # add instruc
+        if 'instruc_type' in kwargs.keys():
+            instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + kwargs['instruc_type'] + '.txt'
+            fsu.raise_exception_if_object_not_exist(instruc_path, "ERROR:  No txt file exists for instruc_type: " + kwargs['instruc_type'] + 'at ' + instruc_path)
+            
+            txt_dd['instruc'] = {'txt_lines' : read_text_file(instruc_path),
+                                 'param_d'   : INSTRUC_PARAM_D}
+
+        # biz_id
+        box_title = 'biz_id' 
+        if box_title in box_coords.keys():
+            txt_dd[box_title] = {'txt_lines' : [kwargs['biz_id']],
+                                 'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
+    
+        return txt_dd
+
 
     
     if not fsu.is_file(blank_template_img_path):
@@ -195,16 +219,17 @@ def make_new_blank_store_template(kwargs, box_coords):
     img = pu.open_img(blank_template_img_path)
     
 
-    # add instruc
-    instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + instruc_type + '.txt'
-    instruc_txt_d = {'txt_lines' : read_text_file(instruc_path),
-                     'param_d'   : INSTRUC_PARAM_D}
-    write_txt_d_to_img_in_box_coords(img, 'instruc', instruc_txt_d, box_coords)
+#     # add instruc
+#     instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + instruc_type + '.txt'
+#     instruc_txt_d = {'txt_lines' : read_text_file(instruc_path),
+#                      'param_d'   : INSTRUC_PARAM_D}
+#     write_txt_d_to_img_in_box_coords(img, 'instruc', instruc_txt_d, box_coords)
     
+    # write txt to img
+    txt_dd = build_txt_dd(kwargs)
+    img = write_txt_dd_to_img(img, txt_dd, box_coords)
     
-    
-    
-    
+        
     # add images        
     if 'logo' in TEMPLATE_COLORS_DD[template_type]:
         # if trimmed logo does not exist, make it by trimming original logo img
@@ -264,8 +289,8 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
         
     # write txt to img
     txt_dd = build_txt_dd(kwargs)
-    for box_title, txt_d in txt_dd.items():
-        img = write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords)
+    write_txt_dd_to_img(img, txt_dd, box_coords)
+
         
     # paste imgs to img
     img_dd = build_img_dd(kwargs)
