@@ -116,7 +116,7 @@ def get_aspect_ratio_monospace(font_pth):
 
 # this seems really dumb
 def load_font_of_height(font_path, font_height):
-    print('font_h: ', font_height)#``````````````````````````````````````````````````````````````````````````````````````````````````
+#     print('font_h: ', font_height)#``````````````````````````````````````````````````````````````````````````````````````````````````
 
     font_size = font_height
      
@@ -424,7 +424,7 @@ def simple_monospace_write_txt_on_img(img, lines, font, txt_color):
 
 
 def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_path, txt_box_h_align, txt_box_v_align, txt_h_align):
-    if type(lines) != list:
+    if type(lines) != list and type(lines) != tuple:
         raise Exception('ERROR:  lines must be type list, is type: ', type(lines), '  lines: ', lines)
     # get final aspect ratio
     longest_line_len = len(max(lines, key=len))

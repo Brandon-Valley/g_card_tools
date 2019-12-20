@@ -136,12 +136,9 @@ def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
     txt_param_d = txt_d['param_d']
 #         print('in write_txt_d_to_img, txt_d: ', txt_d)#``````````````````````````````````````````````````````````````````````````````````
     print(box_title)#```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
-    print('box_coords[box_title]: ', box_coords[box_title])#``````````````````````````````````````````````````````````
+#     print('box_coords[box_title]: ', box_coords[box_title])#``````````````````````````````````````````````````````````
     img = pu.write_txt_on_img_in_box_coords(img,                                                           
-                                            box_coords_tup  = box_coords[box_title], # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#                                                 box_coords_tup  = [[509, 19], [509, 472], [660, 19], [660, 472]], 
-# [[671, 247], [671, 471], [671, 247], [671, 471]]
-# [[671, 20], [671, 243], [769, 20], [769, 243]]
+                                            box_coords_tup  = box_coords[box_title], 
                                             lines           = txt_d['txt_lines'],
                                             txt_color       = txt_param_d['color'],
                                             font_path       = FONT_PATH,
@@ -155,14 +152,15 @@ def write_txt_d_to_img_in_box_coords(img, box_title, txt_d, box_coords):
 
 
 
-def make_new_blank_store_template(box_coords, store_name, template_type, instruc_type):
+def make_new_blank_store_template(kwargs, box_coords):
+    store_name    = kwargs['store_name']
+    template_type = kwargs['template_type']
+    instruc_type  = kwargs['instruc_type']
+    
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     blank_template_img_path            = get__blank_template_img_path(template_type)
     blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
     
-    
-
-
     
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
@@ -293,10 +291,11 @@ def main():
     kwargs = {'store_name'    : 'jimmy_johns',
               'main_code'     : '6050110010041436106',
               'pin'           : '953',
+              'biz_id'        : '66276',
               'value'         : '25',
               'bonus'         : False,
               'template_type' : 'g_card_pin_biz_id',
-              'instruc_type'  :  'add_code_or_receipt'
+              'instruc_type'  : 'add_code_or_receipt'
               }
     
     # get template_type_box_coords from json file
@@ -315,7 +314,7 @@ def main():
      
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
-        make_new_blank_store_template(template_type_box_coords, kwargs['store_name'], kwargs['template_type'], kwargs['instruc_type'])
+        make_new_blank_store_template(kwargs, template_type_box_coords )
          
          
          
