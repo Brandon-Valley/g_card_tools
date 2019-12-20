@@ -15,11 +15,11 @@ import project_vars as pv
 #                                     'value'     : (149, 155, 155)
 
 
+w = 300
+h = 50
 
-h = 1080
-w = 480
 
-fill_color = (0, 0, 150)
+fill_color = (255, 0, 0)
 border_color = None#(0,0,0)
 border_width = 10
 

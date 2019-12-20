@@ -36,7 +36,7 @@ TEMPLATE_COLORS_DD = {
                                                 'biz_id'    : (167, 88, 216),
                                                 'bonus_msg' : (111, 193, 121),
                                                 'extra'     : (219, 107, 83),
-                                                'value'     : (149, 155, 155)
+                                                'value'     : (255, 0, 0)
                                               }
                      }
 
@@ -134,6 +134,7 @@ def get_template_type_box_coords(template_type):
         normalized_color_template_img = pu.open_img(normalized_color_template_img_path)
         print('  Getting box coords from normalized_color_template_img...')
         box_coords = pu.get_box_coords_d(normalized_color_template_img, TEMPLATE_COLORS_DD[template_type])
+#         print(box_coords)#```````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
         
         dim_template_box_coords_ddd[TEMPLATE_DIMS_STR][template_type] = box_coords
         json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
@@ -207,11 +208,11 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
         img.save(blank_template_img_path)
         
         
-    def build_txt_dd(kwargs):    
+    def build_txt_dd(kwargs, box_coords):    
         txt_dd = {}
        
         # add instruc
-        if 'instruc_type' in kwargs.keys():
+        if 'instruc_type' in kwargs.keys() and 'instruc' in box_coords.keys():
             instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + kwargs['instruc_type'] + '.txt'
             fsu.raise_exception_if_object_not_exist(instruc_path, "ERROR:  No txt file exists for instruc_type: " + kwargs['instruc_type'] + 'at ' + instruc_path)
             
@@ -220,7 +221,7 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
 
         # biz_id
         box_title = 'biz_id' 
-        if box_title in box_coords.keys():
+        if str_in_keys_of_all(box_title, [kwargs, box_coords]):
             txt_dd[box_title] = {'txt_lines' : [kwargs['biz_id']],
                                  'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
     
@@ -236,7 +237,7 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     img = pu.open_img(blank_template_img_path)
     
     # write txt to img
-    txt_dd = build_txt_dd(kwargs)
+    txt_dd = build_txt_dd(kwargs, box_coords)
     img = write_txt_dd_to_img(img, txt_dd, box_coords)
     
         
@@ -262,7 +263,11 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
     img.save(blank_store_template_img_path)
      
-     
+def str_in_keys_of_all(str_to_check, dict_list):
+    for d in dict_list:
+        if str_to_check not in d.keys():
+            return False
+    return True
         
 def make_new_code_card(kwargs, box_coords, blank_store_template_img):
     def build_txt_dd(kwargs):
@@ -270,12 +275,12 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
         
         default_txt_d_setup_box_title_l = ['main_code', 'pin']
         for box_title in default_txt_d_setup_box_title_l:
-            if box_title in kwargs.keys():
+            if str_in_keys_of_all(box_title, [kwargs, box_coords]):
                 txt_dd[box_title] = {'txt_lines' : [kwargs[box_title]],
                                      'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
             
         box_title = 'value'
-        if box_title in kwargs.keys():
+        if str_in_keys_of_all(box_title, [kwargs, box_coords]):
             txt_dd[box_title] = {'txt_lines' : ['Value: $' + kwargs[box_title]],
                                  'param_d'   : CENTERED_BLACK_LBL_PARAM_D}
         
@@ -295,6 +300,7 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
         
     # write txt to img
     txt_dd = build_txt_dd(kwargs)
+    print('in make_code_card, txt_dd: ', txt_dd)#```````````````````````````````````````````````````````````````````````````````
     write_txt_dd_to_img(img, txt_dd, box_coords)
 
         
@@ -349,6 +355,9 @@ def make_code_card(kwargs, test_mode):
             # if the normalized_color_template_img does not exist, it will be created from the user-made color_template_img
     print('  Getting template_type_box_coords...')
     template_type_box_coords = get_template_type_box_coords(template_type)
+    
+    for box_title, box_coords in template_type_box_coords.items():
+        print(box_title + ' : ' + str(box_coords))
     
      
     # get blank_store_template_img from path

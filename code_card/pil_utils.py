@@ -567,7 +567,8 @@ def get_box_coords_d(img, box_colors_d):
     
     for box_lbl, box_color in box_colors_d.items():
         box_coords = get_colored_box_corner_coords(img, box_color)
-        box_coords_d[box_lbl] = box_coords
+        if box_coords != False:
+            box_coords_d[box_lbl] = box_coords
         
     return box_coords_d
 
