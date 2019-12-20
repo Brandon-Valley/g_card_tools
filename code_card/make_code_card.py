@@ -174,8 +174,8 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     normalized_color_template_img_path = get__normalized_color_template_img_path(template_type)
     
     if test_mode:
-        blank_template_img_path            = get__blank_template_img_path(template_type)
-        blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
+        blank_template_img_path            = get__test_mode_blank_template_img_path(template_type)
+        blank_store_template_img_path      = get__test_mode_blank_store_template_img_path(store_name)
     else:
         blank_template_img_path            = get__blank_template_img_path(template_type)
         blank_store_template_img_path      = get__blank_store_template_img_path(store_name)
@@ -235,13 +235,6 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     # make blank_store_template_img
     img = pu.open_img(blank_template_img_path)
     
-
-#     # add instruc
-#     instruc_path = pv.INSTRUC_TXT_DIR_PATH + '\\' + instruc_type + '.txt'
-#     instruc_txt_d = {'txt_lines' : read_text_file(instruc_path),
-#                      'param_d'   : INSTRUC_PARAM_D}
-#     write_txt_d_to_img_in_box_coords(img, 'instruc', instruc_txt_d, box_coords)
-    
     # write txt to img
     txt_dd = build_txt_dd(kwargs)
     img = write_txt_dd_to_img(img, txt_dd, box_coords)
@@ -267,7 +260,6 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     
     #             img = pu.open_img("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools_big_data\\images\\code_cards\\492x1091\\color_template__normalized__g_card.png")
     #             pu.paste_nicely_in_box_coords(logo_img, img, box_coords['logo'], 'centered', 'centered')
-    #         
     img.save(blank_store_template_img_path)
      
      
@@ -292,16 +284,13 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
     def build_img_dd(kwargs):
         img_dd = {}
         
-        
         if 'main_code' in kwargs.keys():
             img_dd['barcode'] = {'img' : barcode_utils.get_barcode_img(kwargs['main_code']),
                                  'horz_align' : 'centered',
                                  'vert_align' : 'centered'}
         return img_dd
             
-        
-        
-        
+                
     img = blank_store_template_img
         
     # write txt to img
@@ -324,9 +313,9 @@ def make_new_code_card(kwargs, box_coords, blank_store_template_img):
 def make_code_card(kwargs, test_mode):
     template_type = kwargs['template_type']
     store_name = kwargs['store_name']
-    
-    
-    
+        
+    img_paths_to_delete_l = [get__test_mode_blank_store_template_img_path(store_name),
+                             get__test_mode_blank_template_img_path(template_type)]
     if test_mode:
         # remove the needed box coords from the json file if it exists
         if fsu.is_file(TEMPLATE_BOX_COORDS_JSON_PATH):
@@ -338,12 +327,20 @@ def make_code_card(kwargs, test_mode):
                 json_logger.write(dim_template_box_coords_ddd, TEMPLATE_BOX_COORDS_JSON_PATH)
                 
         # remove imgs so they get re-made
-        img_paths_to_delete_l = [get__normalized_color_template_img_path(template_type),
-                                 get__blank_template_img_path(template_type),
-                                 get__blank_store_template_img_path(store_name)]
-        
-        for img_path in img_paths_to_delete_l:
-            fsu.delete_if_exists(img_path)
+#         img_paths_to_delete_l = [get__normalized_color_template_img_path(template_type),
+#                                  get__blank_template_img_path(template_type),
+#                                  get__blank_store_template_img_path(store_name)]
+        img_paths_to_delete_l.append(get__normalized_color_template_img_path(template_type))
+        img_paths_to_delete_l.append(get__blank_template_img_path(template_type))
+        img_paths_to_delete_l.append(get__blank_store_template_img_path(store_name))
+
+    
+    img_paths_to_delete_l.append(get__test_mode_blank_store_template_img_path(store_name))
+    img_paths_to_delete_l.append(get__test_mode_blank_template_img_path(template_type))
+                                 
+            
+    for img_path in img_paths_to_delete_l:
+        fsu.delete_if_exists(img_path)
             
     
     # get template_type_box_coords from json file
@@ -358,15 +355,18 @@ def make_code_card(kwargs, test_mode):
         # if blank_store_template image does not exist, make it
             # if blank_template_img does not already exist, it will be created in the process
     print('  Getting blank_store_template_img...')
-    blank_store_template_img_path = get__blank_store_template_img_path(store_name)
+    if test_mode:
+        blank_store_template_img_path = get__test_mode_blank_store_template_img_path(store_name)
+    else:
+        blank_store_template_img_path = get__blank_store_template_img_path(store_name)
+        
+    print('blank_store_template_img_path: ', blank_store_template_img_path)#```````````````````````````````````````````````````````````
+    
      
     if not fsu.is_file(blank_store_template_img_path):
         print('    Blank_store_template_img does not exist, creating it now...')
         make_new_blank_store_template(kwargs, template_type_box_coords, test_mode)
-         
-         
-         
-         
+#     else:
     blank_store_template_img = pu.open_img(blank_store_template_img_path)
 #     blank_store_template_img.show()
     
