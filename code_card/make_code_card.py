@@ -1,6 +1,6 @@
 import json_logger
 import pil_utils as pu
-import barcode_utils
+import barcode_utils  
 
 # to import from parent dir 
 import sys, os

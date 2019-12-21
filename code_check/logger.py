@@ -82,7 +82,7 @@ def write2CSV(logDictList, csvPath, headerList = None):
     else:
         fieldnames = headerList
         
-    # if csvPath points to a file in dirs that dont exist, make the dirs
+    # if csvPath points to a file in dirs that don't exist, make the dirs
     parentDirPath = os.path.dirname(csvPath)
     if not os.path.exists(parentDirPath):
         os.makedirs(parentDirPath)

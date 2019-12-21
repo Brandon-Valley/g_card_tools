@@ -1,4 +1,5 @@
 import file_system_utils as fsu
+# from code_check.Store import UNUSED_CODE_DIR_PATH
 
 
 # assumes directory structure like this:"
@@ -25,6 +26,11 @@ G_CARD_TOOLS_BIG_DATA_DIR_PATH = fsu.get_parent_dir_from_path(G_CARD_TOOLS_DIR_P
 
 FONTS_DIR_PATH = G_CARD_TOOLS_DIR_PATH + '\\fonts'
 TXT_DIR_PATH   = G_CARD_TOOLS_DIR_PATH + '\\txt'
+
+CODE_CHECK_DIR_PATH = G_CARD_TOOLS_DIR_PATH + '\\code_check'
+
+UNUSED_CODES_DIR_PATH = CODE_CHECK_DIR_PATH + '\\unused_codes'
+
 
 INSTRUC_TXT_DIR_PATH = TXT_DIR_PATH + '\\instruction_txt'
 

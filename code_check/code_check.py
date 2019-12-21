@@ -1,3 +1,7 @@
+# from code_check import Store
+from datetime import datetime
+
+
 import Store
 import Skyzone
 import Jimmy_Johns
@@ -5,13 +9,19 @@ import Jets_Pizza
 import Mcalisters_Deli
 
 import clipboard_tools as cb_tools
+import logger
+import str_utils
 
 # to import from parent dir
 import sys, os
+# from code_check.Store import UNUSED_CODE_DIR_PATH  # eventually move this to just this file !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 # from parent dir
 import file_system_utils as fsu
+import project_vars as pv
 
+
+MAX_CONFIRMED_CODE_AGE = 1 # days
 
 
 
@@ -39,7 +49,7 @@ def get_store_from_user():
     input_num = input("  Enter the # of the store: ")
     return STORE_L[int(input_num) - 1] 
         
-# returns name of store in working csv filename if exists, otherwise returns false
+# returns name of store in working l filename if exists, otherwise returns false
 def get_working_store_name_if_exists():
 #     print('in get_working_store_name')#``````````````````````````````````````````````````````````````````````````````````
 #     working_csv_parent_dir_path = fsu.get_parent_dir_from_path(Store.WORKING_CSV_PARENT_DIR_PATH + '.csv')
@@ -52,49 +62,124 @@ def get_working_store_name_if_exists():
     print('file_name_l: ', file_name_l)#``````````````````````````````````````````````````````````````````````````````````````````
     for file_name in file_name_l:
         if file_name.startswith(Store.WORKING_CSV_FILE_NAME_HEADER):
-            return Store.multi_dim_split([Store.WORKING_CSV_FILE_NAME_HEADER, '.csv'], file_name)[1]
+            return str_utils.multi_dim_split([Store.WORKING_CSV_FILE_NAME_HEADER, '.csv'], file_name)[1]
     return False
+
+
+
+def get_store_unused_codes_csv_path(store_name):  return pv.UNUSED_CODES_DIR_PATH + '\\' + store_name + '__unused_codes.csv'
+
+
+def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
+    def get_datetime_from_dt_csv_str(datetime_csv_str):
+        ss = str_utils.multi_dim_split(['-', ' ', ':'], datetime_csv_str)
+        print(ss)
+        
+        return datetime(int(ss[0]), int(ss[1]), int(ss[2]), int(ss[3]), int(ss[4]), int(ss[5]))
+
+
+    # use oldest codes first, oldest codes should be at the top of the unused_codes csv
+    def get_confirmed_code_dl(store_name, value, quantity):
+        confirmed_code_dl = []
+        
+        unused_code_csv_path = get_store_unused_codes_csv_path(code_req_d['store_name'])
+        print(unused_code_csv_path)#```````````````````````````````````````````````````````````````````````````````````````````````
+        
+        # return empty if code csv does not exist
+        if not fsu.is_file(unused_code_csv_path):
+            return confirmed_code_dl
+        
+        row_dl = logger.readCSV(unused_code_csv_path)
+        
+        for row_d in row_dl:
+            if float(row_d['adv_value']) == float(value):
+                 print(row_d['last_confirmed'])
+                 last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
+                 print(last_confirm_datetime)
+            
+        while(True):
+            pass
+        
+        
+        
+        
+    
+    while(len(code_req_dl) > 0):
+        code_req_d = code_req_dl[0]
+        confirmed_code_dl = get_confirmed_code_dl(code_req_d['store_name'], code_req_d['value'], code_req_d['quantity'])
+        print(confirmed_code_dl)
+
+    print('out')
+
     
 
 def main():
-    # clear blank file fro "next" marker if one exists
-    fsu.delete_if_exists(Store.BLANK_FILE_PATH)
     
-    working_store_name = get_working_store_name_if_exists()
-    print('working_store_name: ', working_store_name)
+    code_req_dl = [{'store_name' : 'jimmy_johns',
+                    'value'      : 25,
+                    'quantity'   : 2},
+                   
+                   {'store_name' : 'jets_pizza',
+                    'value'      : 25,
+                    'quantity'   : 2},
+                   
+                   {'store_name' : 'jets_pizza',
+                    'value'      : 50,
+                    'quantity'   : 1}
+                   ]
     
-    print('  Current Clipboard: ')
-    print('       ' + cb_tools.get_clipboard())
-    # get store from user 
-    print('  Codes for the store you select will be copied from your clipboard')
-    store = get_store_from_user()
     
-    # get codes from user's clipboard
-    code_str_l = get_code_str_l_from_clipboard()
+    print(fsu.is_file(get_store_unused_codes_csv_path('jimmy_johns')))#````````````````````````````````````````````````````````````
+    print(logger.readCSV(get_store_unused_codes_csv_path('jimmy_johns')))
+     
+    confirmed_code_type_dl, is_complete = get_confirmed_code_type_dl__and_is_complete(code_req_dl)
+    print('confirmed_code_type_dl: ', confirmed_code_type_dl)###########``````````````````````````````````````````````````````````````````````````
+    print('is_complete: ', is_complete)#```````````````````````````````````````````````````````````````````````````````````````````````````
+     
     
-    # check the codes using the store's unique functions
-    store.check_new_codes(code_str_l)
     
-    print('done!')
     
-#     skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
-#                     '6050110010068394475-95704:630 | $60.00',
-#                     '6050110010068396936-95704:513 | $53.17']
+## DONT DELETE VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     
+#     # clear blank file for "next" marker if one exists
+#     fsu.delete_if_exists(Store.BLANK_FILE_PATH)
+#         
+#     working_store_name = get_working_store_name_if_exists()
+#     print('working_store_name: ', working_store_name)
+#         
+#     print('  Current Clipboard: ')
+#     print('       ' + cb_tools.get_clipboard())
+#     # get store from user 
+#     print('  Codes for the store you select will be copied from your clipboard')
+#     store = get_store_from_user()
+#         
+#     # get codes from user's clipboard
+#     code_str_l = get_code_str_l_from_clipboard()
+#         
+#     # check the codes using the store's unique functions
+#     store.check_new_codes(code_str_l)
+#         
+#     print('done!')
 #     
-#     code_str_l = skyzone_code_l
-#     # code_str_l = get_code_str_l_from_clipboard()
-#     print(code_str_l)
 #     
+# #     skyzone_code_l = ['6050110010068393855-95704:679 | $30.00',
+# #                     '6050110010068394475-95704:630 | $60.00',
+# #                     '6050110010068396936-95704:513 | $53.17']
+# #     
+# #     code_str_l = skyzone_code_l
+# #     # code_str_l = get_code_str_l_from_clipboard()
+# #     print(code_str_l)
+# #     
+# #     
+# #     # print(clipboard.split())
+# #     # # print(clipboard)
+# #     # 
+# #     s = Skyzone.Skyzone()
+# #     s.check_new_codes(code_str_l)
+# #     print('done')
+# #     # s.parse_codes(clipboard)
+# #     # # print(s.code)
 #     
-#     # print(clipboard.split())
-#     # # print(clipboard)
-#     # 
-#     s = Skyzone.Skyzone()
-#     s.check_new_codes(code_str_l)
-#     print('done')
-#     # s.parse_codes(clipboard)
-#     # # print(s.code)
-    
     
 if __name__ == '__main__':
     main()

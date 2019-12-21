@@ -12,7 +12,7 @@ class Jets_Pizza(Store.Store):
         # required 
         self.name = 'Jets_Pizza'
         self.url  = 'https://www.mercury-gift.com/'
-        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value']
+        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
 
         
         # optional

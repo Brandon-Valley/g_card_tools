@@ -12,7 +12,7 @@ class Jimmy_Johns(Store.Store):
         # required 
         self.name = 'jimmy_johns'
         self.url  = 'https://www.mercury-gift.com/JimmyJohns/CheckBalance?Length=151'
-        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value']
+        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
 
         
         # optional

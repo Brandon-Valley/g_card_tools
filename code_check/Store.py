@@ -6,6 +6,7 @@ from ctypes import windll
 from tkinter import Tk
 import time
 import keyboard
+from datetime import datetime
 
 # https://www.reddit.com/r/excel/comments/4hgoky/how_to_save_csv_file_without_annoying_prompts/
 
@@ -13,10 +14,13 @@ import keyboard
 import logger
 import clipboard_tools as cb_tools
 import hotkey_utils as hu
+import str_utils
+
+
 from humanfriendly.text import split
 
 BLANK_FILE_PATH = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\make_blank_file\\blank_file.txt"
-UNUSED_CODE_DIR_PATH = 'unused_codes'
+UNUSED_CODE_DIR_PATH = 'unused_codes' # eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 WORKING_CSV_PARENT_DIR_PATH = ''
 WORKING_CSV_FILE_NAME_HEADER = 'working__'
@@ -40,17 +44,6 @@ def copy_selection():
             pass
 
 
-
-def multi_dim_split(dim_l, str):
-    s_l = [str]
-    for dim in dim_l:
-        new_s_l = []
-        for str in s_l:
-            split_str_l = str.split(dim)
-            for split_str in split_str_l:
-                new_s_l.append(split_str)
-        s_l = new_s_l
-    return s_l
     
 
 # implemented
@@ -101,7 +94,11 @@ class Store:
 #             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
             
             code_d['code'] = code_d['code'] + "'"
+            code_d['last_confirmed'] = str(datetime.now()) + "'"
+            print("code_d['last_confirmed']: ", code_d['last_confirmed'])#```````````````````````````````````````````````````````````````
 #             logger.logSingle(code_d, self.working_csv_path, wantBackup = True, headerList = self.csv_header_l)
+            print('code_d: ', code_d)#`````````````````````````````````````````````````````````````````````````````````````````
+            print(self.csv_header_l)
             logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
 
 
@@ -111,7 +108,7 @@ class Store:
             code_d = {'og_code_str' : code_str,
                       'real_value'  : None}
                       
-            split_code_l = multi_dim_split(self.code_parse_dim_l, code_str)
+            split_code_l = str_utlis.multi_dim_split(self.code_parse_dim_l, code_str)
 #             print('in store, split_code_l: ', split_code_l)#`````````````````````````````````````````````````````````````````
             try:
                 if mode_str == 'code_id_pin_val':
@@ -130,7 +127,7 @@ class Store:
           
     
     
-    # defualt for quick checks, puts values in order_l in clip board, 
+    # default for quick checks, puts values in order_l in clip board, 
     # returns clip board on last user action (user must manually copy value display
     def single_code_check_____clipboard_method(self, code_d, order_l = ['code', 'id', 'pin']):
 #         print('in store: code_d: ', code_d)#``````````````````````````````````````````````````````````````````````````````````
@@ -148,8 +145,21 @@ class Store:
         return clipboard
 
 if __name__ == '__main__':
-    import code_check
-    code_check.main()
+    
+    code_d = {'id': '66276', 'code': "6050110010041431467'", 'pin': '296', 'og_code_str': '6050110010041431467-66276:296 | $25.00',
+                'real_value': 25.0, 'adv_value': '25.00'}
+    code_d['last_confirmed'] = str(datetime.now()).split('.')[0]# + "'"
+    print(code_d['last_confirmed'])
+    
+    header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
+#     header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value']
+    unused_csv_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv"
+    logger.logSingle(code_d, unused_csv_path, wantBackup = True, headerList = header_l)
+    print('logged stuff in csv')
+    
+    
+#     import code_check
+#     code_check.main()
     
     
 # 6050110010041431467-66276:296 | $25.00
