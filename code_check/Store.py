@@ -143,6 +143,32 @@ class Store:
         clipboard = cb_tools.get_clipboard()
         keyboard.press_and_release('alt+tab', 1) # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
         return clipboard
+    
+    
+    
+    def get_code_value(self, code_d):
+        def open_code_check_url():
+            chrome_browser = webbrowser.get("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s")
+            chrome_browser.open_new_tab(self.url)
+        
+        open_code_check_url()
+        value_display_str = self.single_code_check(code_d)
+        return self.parse_value_display_str(value_display_str)
+# #             code_d['real_value'] = 30.0
+#         
+# #             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
+#         
+#         code_d['main_code'] = code_d['main_code'] + "'"
+#         code_d['last_confirmed'] = str(datetime.now()) + "'"
+#         print("code_d['last_confirmed']: ", code_d['last_confirmed'])#```````````````````````````````````````````````````````````````
+# #             logger.logSingle(code_d, self.working_csv_path, wantBackup = True, headerList = self.csv_header_l)
+#         print('code_d: ', code_d)#`````````````````````````````````````````````````````````````````````````````````````````
+#         print(self.csv_header_l)
+#         logger.logSingle(code_d, self.unused_codes_csv_path, wantBackup = True, headerList = self.csv_header_l)
+        
+    
+    
+    
 
 if __name__ == '__main__':
     

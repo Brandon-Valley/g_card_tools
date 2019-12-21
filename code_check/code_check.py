@@ -113,14 +113,20 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
             
                 # if it has been too long since last check, re-check code
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
+                    # build code_d
                     code_d = {}
-                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'main_code')
+                    
+                    header = 'main_code'
+                    if header in row_d.keys():
+                        code_d[header] = row_d[header][:-1]
+
                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print(code_d)
                     
                     
-                    store.get_code_value()
+                    real_value = store.get_code_value(code_d)
+                    print(real_value)
                  
                  
                  
