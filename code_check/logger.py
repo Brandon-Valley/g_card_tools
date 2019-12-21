@@ -10,7 +10,6 @@
 import csv
 import os.path
 import os
-from pandas.io.sas.sas_constants import row_count_offset_multiplier
 
 # use this to get path
 # import os
@@ -195,7 +194,10 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
     return csvData
 
 
-
+def writeLines2CSV(lines, csvPath):
+    with open(csvPath, 'wt', encoding='utf8') as csvFile:
+        writer = csv.writer(csvFile, lineterminator = '\n')
+        writer.writerows(lines)
 
 def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
     lines = []
@@ -203,35 +205,61 @@ def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
     with open(csvPath, 'r') as readFile:
         reader = csv.reader(readFile)         
         
-        row_count = 0
+        rowCount = 0
         for row in reader:
+            print(row)
             lines.append(row)
-            row_count += 1
-        print(lines)
-        print(row_count)
+            rowCount += 1
             
-        if (rowNum + 1 >= row_count or rowNum < 0):
+        if (rowNum + 1 >= rowCount or rowNum < 0):
             if errorIfRowNotExist:
                 raise Exception("ERROR:  Given rowNum to delete:  " + str(rowNum) + "  does not exist in csv at:  " + csvPath)
             else:
                 return
         
         lines.pop(rowNum + 1)
-                
-        print(lines)
+        
+    writeLines2CSV(lines, csvPath)
     
-    with open(csvPath, 'wt', encoding='utf8') as csvFile:
-        writer = csv.writer(csvFile, lineterminator = '\n')
-        writer.writerows(lines)
+    
+''' remove all rows that have val for header '''
+def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
+    with open(csvPath) as csvfile:
+        csvReader = csv.DictReader(csvfile)
+        headerL = csvReader.fieldnames
+        
+        if header not in headerL:
+            if errorIfHeaderNotExist:
+                errMsg = "ERROR:  Header:  " + header + '  does not exist in csv,\n                   ' + \
+                'csv header list =  ' + str(headerL) + "\n                   csvPath: " + csvPath
+#                 raise Exception()
+                raise Exception(errMsg)
+        
+        
+        
+        for row in csvReader:
+            print(row[2])
+
+                    
+
 
 
 
 
 if __name__ == '__main__':
-                
-    removeRowByRowNum(0, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv")
+    path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv"
+    code = '6050110010041431467'
+
+
+#     removeRowByRowNum(0, path)
+
+    removeRowByHeaderVal('bnolnol', code, path, True)
+
+
     
-    
+#     with open(path) as csvfile:
+#         csvReader = csv.DictReader(csvfile)
+#         print(csvReader.fieldnames)
     # print('TESTING IN LOGGER...')
     # full_path = os.path.realpath(__file__)
     # csvPath =  os.path.dirname(full_path) + '\\tweet_log.csv' 

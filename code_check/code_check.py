@@ -137,6 +137,8 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                     if real_value < float(row_d['adv_value']):
                         logger.removeRowByRowNum(row_num, unused_code_csv_path)
                         
+                        print(row_d)
+                        
                         failed_codes_csv_path = get__store_failed_codes_csv_path(store_name)
                         logger.logList(row_dl, failed_codes_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
                  
