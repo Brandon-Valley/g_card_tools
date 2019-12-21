@@ -11,6 +11,9 @@ import file_system_utils as fsu
 #  |       |-- fonts
 #  |       |-- txt
 #  |           |-- instruction_txt
+#  |       |-- code_check
+#  |           |-- unused_codes 
+#  |           |-- failed_codes
 #  |  
 #  |   |-- g_card_tools_big_data
 #  |       |-- images
@@ -30,6 +33,7 @@ TXT_DIR_PATH   = G_CARD_TOOLS_DIR_PATH + '\\txt'
 CODE_CHECK_DIR_PATH = G_CARD_TOOLS_DIR_PATH + '\\code_check'
 
 UNUSED_CODES_DIR_PATH = CODE_CHECK_DIR_PATH + '\\unused_codes'
+FAILED_CODES_DIR_PATH = CODE_CHECK_DIR_PATH + '\\failed_codes'
 
 
 INSTRUC_TXT_DIR_PATH = TXT_DIR_PATH + '\\instruction_txt'

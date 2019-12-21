@@ -145,7 +145,10 @@ class Store:
         return clipboard
     
     
-    
+    # returns value of "code" defined by code_d
+    # example code_d: {'main_code' : 050110010041431467,
+    #                  'biz_id'    : 66276,                      # eventually biz_id will be in config so this will go away!!!!!!!!!!!!!!!!!!!!!
+    #                  'pin'       : 296}  
     def get_code_value(self, code_d):
         def open_code_check_url():
             chrome_browser = webbrowser.get("C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s")
@@ -180,7 +183,7 @@ if __name__ == '__main__':
     header_l = ['og_code_str', 'main_code', 'pin', 'biz_id', 'adv_value', 'real_value', 'last_confirmed']
 #     header_l = ['og_code_str', 'main_code', 'pin', 'biz_id', 'adv_value', 'real_value']
     unused_csv_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv"
-    logger.logSingle(code_d, unused_csv_path, wantBackup = True, headerList = header_l)
+    logger.logSingle(code_d, unused_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
     print('logged stuff in csv')
     
     

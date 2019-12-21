@@ -196,7 +196,14 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
 
 
 
-
+def removeRowByRowNum(rowNum, csvPath):
+    with open(csvPath, 'rb') as inp, open(csvPath, 'wb') as out:
+        writer = csv.writer(out)
+        for row in csv.reader(inp):
+            if row[rowNum - 1] != "0":
+                writer.writerow(row)
+                
+# removeRowByRowNum("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv", 1)
 
 
 # print('TESTING IN LOGGER...')
