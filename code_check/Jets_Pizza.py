@@ -12,7 +12,7 @@ class Jets_Pizza(Store.Store):
         # required 
         self.name = 'Jets_Pizza'
         self.url  = 'https://www.mercury-gift.com/'
-        self.csv_header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
+        self.csv_header_l = ['og_code_str', 'main_code', 'pin', 'biz_id', 'adv_value', 'real_value', 'last_confirmed']
 
         
         # optional
@@ -28,7 +28,7 @@ class Jets_Pizza(Store.Store):
     # always do manual work first
     # returns clip board of value display screen 
     def single_code_check(self, code_d):
-        return self.single_code_check_____clipboard_method(code_d, ['code', 'id', 'pin'])
+        return self.single_code_check_____clipboard_method(code_d, ['main_code', 'biz_id', 'pin'])
 
   
     # parse the string that results from pressing ctrl+a and copying
