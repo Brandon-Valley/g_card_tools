@@ -93,7 +93,7 @@ class Store:
             
 #             print('about to log:  code_d:  ', code_d)#`````````````````````````````````````````````````````
             
-            code_d['code'] = code_d['code'] + "'"
+            code_d['main_code'] = code_d['main_code'] + "'"
             code_d['last_confirmed'] = str(datetime.now()) + "'"
             print("code_d['last_confirmed']: ", code_d['last_confirmed'])#```````````````````````````````````````````````````````````````
 #             logger.logSingle(code_d, self.working_csv_path, wantBackup = True, headerList = self.csv_header_l)
@@ -112,13 +112,13 @@ class Store:
 #             print('in store, split_code_l: ', split_code_l)#`````````````````````````````````````````````````````````````````
             try:
                 if mode_str == 'code_id_pin_val':
-                    code_d['code']      = split_code_l[0]
+                    code_d['main_code']      = split_code_l[0]
                     code_d['id']        = split_code_l[1]
                     code_d['pin']       = split_code_l[2]
                     code_d['adv_value'] = split_code_l[3]
                     
                 elif mode_str == 'code_val':
-                    code_d['code']      = split_code_l[0]
+                    code_d['main_code']      = split_code_l[0]
                     code_d['adv_value'] = split_code_l[1]
             except: 
                 raise Exception("ERROR:  Could not split clipboard, probably dont hove codes in clipboard:  ", code_str_l)
@@ -129,7 +129,7 @@ class Store:
     
     # default for quick checks, puts values in order_l in clip board, 
     # returns clip board on last user action (user must manually copy value display
-    def single_code_check_____clipboard_method(self, code_d, order_l = ['code', 'id', 'pin']):
+    def single_code_check_____clipboard_method(self, code_d, order_l = ['main_code', 'id', 'pin']):
 #         print('in store: code_d: ', code_d)#``````````````````````````````````````````````````````````````````````````````````
         for str_num, str in enumerate(order_l):
 #             print('in store: adding this to clipboard: ', code_d[order_l[str_num]])#``````````````````````````````````````````````````````````````````````````````````
@@ -146,13 +146,13 @@ class Store:
 
 if __name__ == '__main__':
     
-    code_d = {'id': '66276', 'code': "6050110010041431467'", 'pin': '296', 'og_code_str': '6050110010041431467-66276:296 | $25.00',
+    code_d = {'id': '66276', 'main_code': "6050110010041431467'", 'pin': '296', 'og_code_str': '6050110010041431467-66276:296 | $25.00',
                 'real_value': 25.0, 'adv_value': '25.00'}
     code_d['last_confirmed'] = str(datetime.now()).split('.')[0]# + "'"
     print(code_d['last_confirmed'])
     
-    header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
-#     header_l = ['og_code_str', 'code', 'pin', 'id', 'adv_value', 'real_value']
+    header_l = ['og_code_str', 'main_code', 'pin', 'id', 'adv_value', 'real_value', 'last_confirmed']
+#     header_l = ['og_code_str', 'main_code', 'pin', 'id', 'adv_value', 'real_value']
     unused_csv_path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv"
     logger.logSingle(code_d, unused_csv_path, wantBackup = True, headerList = header_l)
     print('logged stuff in csv')

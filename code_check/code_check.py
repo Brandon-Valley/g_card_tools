@@ -21,10 +21,15 @@ import file_system_utils as fsu
 import project_vars as pv
 
 
-MAX_CONFIRMED_CODE_AGE = 1 # days
+MAX_CONFIRMED_CODE_AGE_DAYS = 0 # days
 
+# TEMPORARY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+STORE_D = {'skyzone'         : Skyzone.Skyzone(),
+           'jimmy_johns'     : Jimmy_Johns.Jimmy_Johns(),
+           'jets_pizza'      : Jets_Pizza.Jets_Pizza(),
+           'mcalisters_deli' : Mcalisters_Deli.Mcalisters_Deli()}
 
-
+# will eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 STORE_L = [Skyzone.Skyzone(),
            Jimmy_Johns.Jimmy_Johns(),
            Jets_Pizza.Jets_Pizza(),
@@ -71,15 +76,19 @@ def get_store_unused_codes_csv_path(store_name):  return pv.UNUSED_CODES_DIR_PAT
 
 
 def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
-    def get_datetime_from_dt_csv_str(datetime_csv_str):
-        ss = str_utils.multi_dim_split(['-', ' ', ':'], datetime_csv_str)
-        print(ss)
-        
-        return datetime(int(ss[0]), int(ss[1]), int(ss[2]), int(ss[3]), int(ss[4]), int(ss[5]))
-
-
     # use oldest codes first, oldest codes should be at the top of the unused_codes csv
     def get_confirmed_code_dl(store_name, value, quantity):
+        
+        def get_datetime_from_dt_csv_str(datetime_csv_str):
+            ss = str_utils.multi_dim_split(['-', ' ', ':'], datetime_csv_str)        
+            return datetime(int(ss[0]), int(ss[1]), int(ss[2]), int(ss[3]), int(ss[4]), int(ss[5]))
+        
+        def add_to_code_d_if_exists_in_row_d(code_d, row_d, key_):
+            if key_ in row_d.keys():
+                code_d[key_] = row_d[key_]
+            return code_d
+        
+        
         confirmed_code_dl = []
         
         unused_code_csv_path = get_store_unused_codes_csv_path(code_req_d['store_name'])
@@ -90,12 +99,34 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
             return confirmed_code_dl
         
         row_dl = logger.readCSV(unused_code_csv_path)
+        store = STORE_D[store_name] # will eventually be replaced with Store(store_name) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
         for row_d in row_dl:
             if float(row_d['adv_value']) == float(value):
-                 print(row_d['last_confirmed'])
-                 last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
-                 print(last_confirm_datetime)
+                print(row_d['last_confirmed'])#````````````````````````````````````````````````````````````````````````````````````
+                last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
+#                 print(last_confirm_datetime)
+                datetime_since_last_confirm = datetime.now() - last_confirm_datetime
+                sec_since_last_confirm = datetime_since_last_confirm.total_seconds()
+#                 print(sec_since_last_confirm)
+#                 print(datetime_since_last_confirm)
+            
+                # if it has been too long since last check, re-check code
+                if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
+                    code_d = {}
+                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'main_code')
+                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
+                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    print(code_d)
+                    
+                    
+                    store.get_code_value()
+                 
+                 
+                 
+                 
+                 
+                 
             
         while(True):
             pass
