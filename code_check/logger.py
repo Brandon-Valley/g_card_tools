@@ -198,26 +198,27 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
 
 
 def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
-#     with open(csvPath, 'rb') as inp, open(csvPath, 'wb') as out:
-#         writer = csv.writer(out)
-#         for row in csv.reader(inp):
-#             if row[rowNum + 1] != "0": # add 1 so deleting row 0 does not delete headers ect.
-#                 writer.writerow(row)
-
     lines = []
         
     with open(csvPath, 'r') as readFile:
-        reader = csv.reader(readFile)
+        reader = csv.reader(readFile)         
         
-        row_count = sum(1 for row in reader)
+        row_count = 0
+        for row in reader:
+            lines.append(row)
+            row_count += 1
+        print(lines)
         print(row_count)
+            
+        if (rowNum + 1 >= row_count or rowNum < 0):
+            if errorIfRowNotExist:
+                raise Exception("ERROR:  Given rowNum to delete:  " + str(rowNum) + "  does not exist in csv at:  " + csvPath)
+            else:
+                return
         
-        if errorIfRowNotExist and (rowNum + 1 > row_count or rowNum < 0):
-            raise Exception("ERROR:  Given rowNum to delete:  " + str(rowNum) + "  does not exist in csv at:  " + csvPath)
-        
-        for row_num, row in enumerate(reader):
-            if row_num != rowNum + 1:
-                lines.append(row)
+        lines.pop(rowNum + 1)
+                
+        print(lines)
     
     with open(csvPath, 'wt', encoding='utf8') as csvFile:
         writer = csv.writer(csvFile, lineterminator = '\n')
