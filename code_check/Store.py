@@ -177,7 +177,7 @@ if __name__ == '__main__':
     
     code_d = {'biz_id': '66276', 'main_code': "6050110010041431467'", 'pin': '296', 'og_code_str': '6050110010041431467-66276:296 | $25.00',
                 'real_value': 25.0, 'adv_value': '25.00'}
-    code_d['last_confirmed'] = str(datetime.now()).split('.')[0]# + "'"
+    code_d['last_confirmed'] = str(datetime.now()).split('.')[0] + "'"
     print(code_d['last_confirmed'])
     
     header_l = ['og_code_str', 'main_code', 'pin', 'biz_id', 'adv_value', 'real_value', 'last_confirmed']

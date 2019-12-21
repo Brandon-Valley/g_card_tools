@@ -81,7 +81,7 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
     def get_confirmed_code_dl(store_name, value, quantity):
         
         def get_datetime_from_dt_csv_str(datetime_csv_str):
-            ss = str_utils.multi_dim_split(['-', ' ', ':'], datetime_csv_str)        
+            ss = str_utils.multi_dim_split(['-', ' ', ':', "'"], datetime_csv_str)        
             return datetime(int(ss[0]), int(ss[1]), int(ss[2]), int(ss[3]), int(ss[4]), int(ss[5]))
         
         def add_to_code_d_if_exists_in_row_d(code_d, row_d, key_):
@@ -140,8 +140,11 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                         failed_codes_csv_path = get__store_failed_codes_csv_path(store_name)
                         logger.logList(row_dl, failed_codes_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
                  
-#                     print('here')
-                
+                 
+                 
+        while(True):
+            pass
+            
         
         
         

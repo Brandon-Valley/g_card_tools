@@ -10,6 +10,7 @@
 import csv
 import os.path
 import os
+from pandas.io.sas.sas_constants import row_count_offset_multiplier
 
 # use this to get path
 # import os
@@ -196,40 +197,64 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
 
 
 
-def removeRowByRowNum(rowNum, csvPath):
-    with open(csvPath, 'rb') as inp, open(csvPath, 'wb') as out:
-        writer = csv.writer(out)
-        for row in csv.reader(inp):
-            if row[rowNum - 1] != "0":
-                writer.writerow(row)
-                
-# removeRowByRowNum("C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv", 1)
+def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
+#     with open(csvPath, 'rb') as inp, open(csvPath, 'wb') as out:
+#         writer = csv.writer(out)
+#         for row in csv.reader(inp):
+#             if row[rowNum + 1] != "0": # add 1 so deleting row 0 does not delete headers ect.
+#                 writer.writerow(row)
 
-
-# print('TESTING IN LOGGER...')
-# full_path = os.path.realpath(__file__)
-# csvPath =  os.path.dirname(full_path) + '\\tweet_log.csv' 
-#   
-# wantBackup = True
-#   
-# headerList = ['Time/Date', 'User_Name', 'Tweet', 'extra_header']
-#    
-# tweetLogDict = {'Time/Date': '11:47pm on saterday',
-#                 'User_Name': '@sagmanblablatest3',     
-#                 'Tweet'    : 'my name is sagman'}
-#     
-# tweetLogDictList = [{'Time/Date': '11:34pm on monday',
-#                      'User_Name': '@bob',     
-#                      'Tweet':     'my name is bob and this is a test'},
-#                         
-#                     {'Time/Date': '12:35pm on tuesday',
-#                      'User_Name': '@jill',     
-#                      'Tweet':     'my name is jill and im the worst'}] 
-#              
-# # logList(tweetLogDictList, csvPath, wantBackup, headerList, 'append')         
-# logSingle(tweetLogDict, csvPath, wantBackup, headerList, 'append')
-# print('DONE TESTING IN LOGGER')
-
-          
-#         
+    lines = []
         
+    with open(csvPath, 'r') as readFile:
+        reader = csv.reader(readFile)
+        
+        row_count = sum(1 for row in reader)
+        print(row_count)
+        
+        if errorIfRowNotExist and (rowNum + 1 > row_count or rowNum < 0):
+            raise Exception("ERROR:  Given rowNum to delete:  " + str(rowNum) + "  does not exist in csv at:  " + csvPath)
+        
+        for row_num, row in enumerate(reader):
+            if row_num != rowNum + 1:
+                lines.append(row)
+    
+    with open(csvPath, 'wt', encoding='utf8') as csvFile:
+        writer = csv.writer(csvFile, lineterminator = '\n')
+        writer.writerows(lines)
+
+
+
+
+if __name__ == '__main__':
+                
+    removeRowByRowNum(0, "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv")
+    
+    
+    # print('TESTING IN LOGGER...')
+    # full_path = os.path.realpath(__file__)
+    # csvPath =  os.path.dirname(full_path) + '\\tweet_log.csv' 
+    #   
+    # wantBackup = True
+    #   
+    # headerList = ['Time/Date', 'User_Name', 'Tweet', 'extra_header']
+    #    
+    # tweetLogDict = {'Time/Date': '11:47pm on saterday',
+    #                 'User_Name': '@sagmanblablatest3',     
+    #                 'Tweet'    : 'my name is sagman'}
+    #     
+    # tweetLogDictList = [{'Time/Date': '11:34pm on monday',
+    #                      'User_Name': '@bob',     
+    #                      'Tweet':     'my name is bob and this is a test'},
+    #                         
+    #                     {'Time/Date': '12:35pm on tuesday',
+    #                      'User_Name': '@jill',     
+    #                      'Tweet':     'my name is jill and im the worst'}] 
+    #              
+    # # logList(tweetLogDictList, csvPath, wantBackup, headerList, 'append')         
+    # logSingle(tweetLogDict, csvPath, wantBackup, headerList, 'append')
+    # print('DONE TESTING IN LOGGER')
+    
+              
+    #         
+            
