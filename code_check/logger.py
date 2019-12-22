@@ -49,9 +49,7 @@ def logList(dataDictList, csvPath, wantBackup = True, headerList = None, overwri
 
 
 def logSingle(dataDict, csvPath, wantBackup = True, headerList = None, overwriteAction = 'append'):
-    csvData = buildCSVdata(dataDict, csvPath, wantBackup, overwriteAction, headerList)
-    print('in log single, csvData: ', csvData)#```````````````````````````````````````````````````````````````````````````
-           
+    csvData = buildCSVdata(dataDict, csvPath, wantBackup, overwriteAction, headerList)           
     write2CSV(csvData, csvPath, headerList) 
 
 
@@ -166,7 +164,6 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
     
     
     if logType == 'list':
-#         print('in logger, ', len(dataContainer))#`````````````````````````````````````````````````````````````````````````````````````
         if len(dataContainer) == 0:
             dataDict = {}
         else:
@@ -197,8 +194,6 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
         for dataDict in dataContainer:
             csvData.append(encodeDataDict(dataDict))
     else:
-        print('in logger, csvData: ', csvData)#```````````````````````````````````````````````````````````````````````````
-
         csvData.append(encodeDataDict(dataContainer))
     
     return csvData
@@ -232,28 +227,7 @@ def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
     writeLines2CSV(lines, csvPath)
     
     
-# ''' remove all rows that have val for header '''
-# def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
-#     with open(csvPath) as csvfile:
-#         csvReader = csv.DictReader(csvfile)
-#         headerL = csvReader.fieldnames
-#         
-#         if header not in headerL:
-#             if errorIfHeaderNotExist:
-#                 errMsg = "ERROR:  Header:  " + header + '  does not exist in csv,\n                   ' + \
-#                 'csv header list =  ' + str(headerL) + "\n                   csvPath: " + csvPath
-# #                 raise Exception()
-#                 raise Exception(errMsg)    
-#         
-# #         lines = [headerL]
-#         lines = []
-#         for row in csvReader:
-#             if row[header] != val and row != headerL:
-#                 lines.append(row)
-#         
-#         
-#         
-# #         writeLines2CSV(lines, csvPath)
+
 ''' remove all rows that have val for header '''
 def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
     rowDL, headerL = readCSV(csvPath, True)
@@ -266,12 +240,9 @@ def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
     
     newRowDL = []
     for rowD in rowDL:
-        print(rowD[header])
         if rowD[header] != str(val):
             newRowDL.append(rowD)
-            
-    print('newRowDL: ', newRowDL)#``````````````````````````````````````````````````````````````````````````````````````````````````
-            
+                        
     logList(newRowDL, csvPath, wantBackup = False, headerList = headerL, overwriteAction = 'overwrite')
         
         

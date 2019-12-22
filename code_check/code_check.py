@@ -89,6 +89,16 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                 code_d[key_] = row_d[key_]
             return code_d
         
+        def build_code_d(row_d):
+            code_d = {}
+            
+            header = 'main_code'
+            if header in row_d.keys():
+                code_d[header] = row_d[header][:-1]
+
+            code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
+            code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            return code_d
         
         confirmed_code_dl = []
         
@@ -104,9 +114,16 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         header_l = store.csv_header_l # will eventually get this from config !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #         print(header_l)
         
-        for row_num, row_d in enumerate(row_dl):
-            print('row_num: ', row_num)#`````````````````````````````````````````````````````````````````````````````````````
+#         for row_d in row_dl:
+        row_num = 0
+        while(len(confirmed_code_dl) < quantity and row_num < len(row_dl)):
+            row_d = row_dl[0]
+#             print('row_num: ', row_num)#`````````````````````````````````````````````````````````````````````````````````````
             if float(row_d['adv_value']) == float(value):
+                
+                code_d = build_code_d(row_d)
+                
+                
                 print(row_d['last_confirmed'])#````````````````````````````````````````````````````````````````````````````````````
                 last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
 #                 print(last_confirm_datetime)
@@ -118,16 +135,19 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                 # if it has been too long since last check, re-check code
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
                     # build code_d
-                    code_d = {}
-                    
-                    header = 'main_code'
-                    if header in row_d.keys():
-                        code_d[header] = row_d[header][:-1]
+#                     code_d = {}
+#                     
+#                     header = 'main_code'
+#                     if header in row_d.keys():
+#                         code_d[header] = row_d[header][:-1]
+# 
+#                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
+#                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
-                    code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    real_value = 12.34 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    real_value = 25 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print('using ', real_value, ' as test #, should check code for real, PUT BACK' )#`````````````````````````````````````````
 
                     print(real_value)
@@ -135,14 +155,20 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                     # if after checking, the real value is less than the  value, 
                     # remove the code from unused_codes and put it in failed_codes
                     if real_value < float(row_d['adv_value']):
-                        logger.removeRowByRowNum(row_num, unused_code_csv_path)
-                        
-                        print(row_d)
+                        logger.removeRowByHeaderVal('og_code_str', row_d['og_code_str'], unused_code_csv_path, errorIfHeaderNotExist = True)
+                        print(row_d)#```````````````````````````````````````````````````````````````````````````````````````````````````````````
                         
                         failed_codes_csv_path = get__store_failed_codes_csv_path(store_name)
                         logger.logList(row_dl, failed_codes_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
-                 
-                 
+                        break
+                
+                # if code not old, or if you just checked and confirmed the code
+                confirmed_code_dl.append(code_d)
+            row_num += 1
+            
+        print(confirmed_code_dl)
+        print(len(confirmed_code_dl))
+                
                  
         while(True):
             pass
