@@ -44,19 +44,20 @@ def logList(dataDictList, csvPath, wantBackup = True, headerList = None, overwri
 #should try not to use much, its not very efficient, same thing as logList() but one dict at a time
 #ex:
 # tweetLogDict = {'Time/Date': '11:47pm on saterday',
-#                 'User_Name': '@sagman',     
+#                 'User_Name': 'sagman',     
 #                 'Tweet':     'my name is sagman bardlileriownoaosnfo'}
 
 
 def logSingle(dataDict, csvPath, wantBackup = True, headerList = None, overwriteAction = 'append'):
     csvData = buildCSVdata(dataDict, csvPath, wantBackup, overwriteAction, headerList)
+    print('in log single, csvData: ', csvData)#```````````````````````````````````````````````````````````````````````````
            
     write2CSV(csvData, csvPath, headerList) 
 
 
 #returns a list of dicts
 #each element of the list is dict with entries like {header_name: data}
-def readCSV(csvPath):
+def readCSV(csvPath, returnHeaderList = False):
     dataDictList = []
     
     with open(csvPath, 'rt', encoding='utf8') as csvfile:
@@ -69,7 +70,10 @@ def readCSV(csvPath):
                 dataStr = row[header]
                 rowDict[header] = dataStr
                 #headerDataDict = ast.literal_eval(headerdataStr)   
-            dataDictList.append(rowDict)              
+            dataDictList.append(rowDict)     
+    
+    if returnHeaderList:         
+        return dataDictList, csvReader.fieldnames
     return dataDictList
 
 
@@ -162,7 +166,11 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
     
     
     if logType == 'list':
-        dataDict = dataContainer[0]
+#         print('in logger, ', len(dataContainer))#`````````````````````````````````````````````````````````````````````````````````````
+        if len(dataContainer) == 0:
+            dataDict = {}
+        else:
+            dataDict = dataContainer[0]
     else:
         dataDict = dataContainer
         
@@ -189,6 +197,8 @@ def buildCSVdata(dataContainer, csvPath, wantBackup, overwriteAction, headerList
         for dataDict in dataContainer:
             csvData.append(encodeDataDict(dataDict))
     else:
+        print('in logger, csvData: ', csvData)#```````````````````````````````````````````````````````````````````````````
+
         csvData.append(encodeDataDict(dataContainer))
     
     return csvData
@@ -222,24 +232,50 @@ def removeRowByRowNum(rowNum, csvPath, errorIfRowNotExist = True):
     writeLines2CSV(lines, csvPath)
     
     
+# ''' remove all rows that have val for header '''
+# def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
+#     with open(csvPath) as csvfile:
+#         csvReader = csv.DictReader(csvfile)
+#         headerL = csvReader.fieldnames
+#         
+#         if header not in headerL:
+#             if errorIfHeaderNotExist:
+#                 errMsg = "ERROR:  Header:  " + header + '  does not exist in csv,\n                   ' + \
+#                 'csv header list =  ' + str(headerL) + "\n                   csvPath: " + csvPath
+# #                 raise Exception()
+#                 raise Exception(errMsg)    
+#         
+# #         lines = [headerL]
+#         lines = []
+#         for row in csvReader:
+#             if row[header] != val and row != headerL:
+#                 lines.append(row)
+#         
+#         
+#         
+# #         writeLines2CSV(lines, csvPath)
 ''' remove all rows that have val for header '''
 def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
-    with open(csvPath) as csvfile:
-        csvReader = csv.DictReader(csvfile)
-        headerL = csvReader.fieldnames
+    rowDL, headerL = readCSV(csvPath, True)
+    
+    if header not in headerL:
+        if errorIfHeaderNotExist:
+            errMsg = "ERROR:  Header:  " + header + '  does not exist in csv,\n                   ' + \
+            'csv header list =  ' + str(headerL) + "\n                   csvPath: " + csvPath
+            raise Exception(errMsg)   
+    
+    newRowDL = []
+    for rowD in rowDL:
+        print(rowD[header])
+        if rowD[header] != str(val):
+            newRowDL.append(rowD)
+            
+    print('newRowDL: ', newRowDL)#``````````````````````````````````````````````````````````````````````````````````````````````````
+            
+    logList(newRowDL, csvPath, wantBackup = False, headerList = headerL, overwriteAction = 'overwrite')
         
-        if header not in headerL:
-            if errorIfHeaderNotExist:
-                errMsg = "ERROR:  Header:  " + header + '  does not exist in csv,\n                   ' + \
-                'csv header list =  ' + str(headerL) + "\n                   csvPath: " + csvPath
-#                 raise Exception()
-                raise Exception(errMsg)
         
-        
-        
-        for row in csvReader:
-            print(row[2])
-
+#         writeLines2CSV(lines, csvPath)
                     
 
 
@@ -248,12 +284,13 @@ def removeRowByHeaderVal(header, val, csvPath, errorIfHeaderNotExist = True):
 
 if __name__ == '__main__':
     path = "C:\\Users\\Brandon\\Documents\\Personal_Projects\\g_card_tools_root\\g_card_tools\\code_check\\unused_codes\\jimmy_johns__unused_codes.csv"
-    code = '6050110010041431467'
+    code = "6050110010041431467'"
 
 
 #     removeRowByRowNum(0, path)
 
-    removeRowByHeaderVal('bnolnol', code, path, True)
+    removeRowByHeaderVal('main_code', code, path, True)
+
 
 
     
