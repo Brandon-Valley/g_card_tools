@@ -112,39 +112,22 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         row_dl = logger.readCSV(unused_code_csv_path)
         store = STORE_D[store_name] # will eventually be replaced with Store(store_name) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         header_l = store.csv_header_l # will eventually get this from config !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#         print(header_l)
         
 #         for row_d in row_dl:
         row_num = 0
         while(len(confirmed_code_dl) < quantity and row_num < len(row_dl)):
             row_d = row_dl[0]
-#             print('row_num: ', row_num)#`````````````````````````````````````````````````````````````````````````````````````
             if float(row_d['adv_value']) == float(value):
                 
                 code_d = build_code_d(row_d)
                 
-                
-                print(row_d['last_confirmed'])#````````````````````````````````````````````````````````````````````````````````````
+#                 print(row_d['last_confirmed'])#````````````````````````````````````````````````````````````````````````````````````
                 last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
-#                 print(last_confirm_datetime)
                 datetime_since_last_confirm = datetime.now() - last_confirm_datetime
                 sec_since_last_confirm = datetime_since_last_confirm.total_seconds()
-#                 print(sec_since_last_confirm)
-#                 print(datetime_since_last_confirm)
-            
+
                 # if it has been too long since last check, re-check code
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
-                    # build code_d
-#                     code_d = {}
-#                     
-#                     header = 'main_code'
-#                     if header in row_d.keys():
-#                         code_d[header] = row_d[header][:-1]
-# 
-#                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'pin')
-#                     code_d = add_to_code_d_if_exists_in_row_d(code_d, row_d, 'biz_id')# eventually remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
 
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     real_value = 25 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -156,7 +139,7 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                     # remove the code from unused_codes and put it in failed_codes
                     if real_value < float(row_d['adv_value']):
                         logger.removeRowByHeaderVal('og_code_str', row_d['og_code_str'], unused_code_csv_path, errorIfHeaderNotExist = True)
-                        print(row_d)#```````````````````````````````````````````````````````````````````````````````````````````````````````````
+#                         print(row_d)#```````````````````````````````````````````````````````````````````````````````````````````````````````````
                         
                         failed_codes_csv_path = get__store_failed_codes_csv_path(store_name)
                         logger.logList(row_dl, failed_codes_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
@@ -169,20 +152,35 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         print(confirmed_code_dl)
         print(len(confirmed_code_dl))
                 
-                 
-        while(True):
-            pass
-            
-        
-        
-        
+        return confirmed_code_dl
+
+
+    confirmed_code_type_dl = []
     
     while(len(code_req_dl) > 0):
         code_req_d = code_req_dl[0]
         confirmed_code_dl = get_confirmed_code_dl(code_req_d['store_name'], code_req_d['value'], code_req_d['quantity'])
-        print(confirmed_code_dl)
+        
+        confirmed_code_dl.append({'store_name' : code_req_d['store_name'],
+                                  'value'      : code_req_d['value'],
+                                  'code_dl'    : confirmed_code_dl})
+        print(confirmed_code_dl)#``````````````````````````````````````````````````````````````````````````````````````````````
+        code_req_dl.pop()
+        
+        # if there is another code_req_d with the same store_name, move it to the front of the list so while you are confirming
+        # codes manually, you will do all codes for the same store at once
+        # would be more efficient to sort at beginning but this make it easier to put in bonus later
+        for cur_code_req_d in code_req_dl:
+            if cur_code_req_d['store_name'] == code_req_d['store_name']:
+                code_req_dl.insert(0, code_req_dl.pop(code_req_dl.index(cur_code_req_d)))
+        
+        
+        
+        
+    return confirmed_code_dl , 'EMPTY_DO_IS_COM:PLETE_LATER'
+        
 
-    print('out')
+
 
     
 
