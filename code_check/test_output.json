@@ -1,41 +1,35 @@
 {
     "jets_pizza": {
         "25": {
+            "is_complete": true,
             "code_dl": [
                 {
-                    "biz_id": "696981",
+                    "main_code": "6050110010044978962",
                     "pin": "424",
-                    "main_code": "6050110010044978962"
+                    "biz_id": "696981"
                 }
-            ],
-            "is_complete": true
+            ]
         }
     },
     "jimmy_johns": {
         "25": {
+            "is_complete": true,
             "code_dl": [
                 {
-                    "biz_id": "66276",
+                    "main_code": "6050110010041437205",
                     "pin": "728",
-                    "main_code": "6050110010041437205"
+                    "biz_id": "66276"
                 },
                 {
-                    "biz_id": "66276",
+                    "main_code": "605011001004143643",
                     "pin": "543",
-                    "main_code": "605011001004143643"
+                    "biz_id": "66276"
                 }
-            ],
-            "is_complete": true
+            ]
         },
-        "50": {
-            "code_dl": [
-                {
-                    "biz_id": "66276",
-                    "pin": "755",
-                    "main_code": "6050110010041439163"
-                }
-            ],
-            "is_complete": true
+        "500": {
+            "is_complete": false,
+            "code_dl": []
         }
     }
 }

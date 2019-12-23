@@ -24,7 +24,7 @@ import project_vars as pv
 VALUE_INDEX    = 0
 QUANTITY_INDEX = 1
 
-MAX_CONFIRMED_CODE_AGE_DAYS = 100 # days
+MAX_CONFIRMED_CODE_AGE_DAYS = 0 # days
 
 # TEMPORARY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 STORE_D = {'skyzone'         : Skyzone.Skyzone(),
@@ -79,9 +79,47 @@ def get__store_unused_codes_csv_path(store_name):  return pv.UNUSED_CODES_DIR_PA
 def get__store_failed_codes_csv_path(store_name):  return pv.FAILED_CODES_DIR_PATH + '\\' + store_name + '__failed_codes.csv'
 
 
+
+
+# ex:
+# {
+#     "jets_pizza": {
+#         "25": {
+#             "is_complete": true,
+#             "code_dl": [
+#                 {
+#                     "main_code": "6050110010044978962",
+#                     "pin": "424",
+#                     "biz_id": "696981"
+#                 }
+#             ]
+#         }
+#     },
+#     "jimmy_johns": {
+#         "25": {
+#             "is_complete": true,
+#             "code_dl": [
+#                 {
+#                     "main_code": "6050110010041437205",
+#                     "pin": "728",
+#                     "biz_id": "66276"
+#                 },
+#                 {
+#                     "main_code": "605011001004143643",
+#                     "pin": "543",
+#                     "biz_id": "66276"
+#                 }
+#             ]
+#         },
+#         "500": {
+#             "is_complete": false,
+#             "code_dl": []
+#         }
+#     }
+# }
 def get_confirmed_code_type_d__and_is_complete(code_req_dl):
     # use oldest codes first, oldest codes should be at the top of the unused_codes csv
-    def get_confirmed_code_dl(store_name, value, quantity):
+    def get_confirmed_code_dl__and_is_complete(store_name, value, quantity):
         
         def get_datetime_from_dt_csv_str(datetime_csv_str):
             ss = str_utils.multi_dim_split(['-', ' ', ':', "'"], datetime_csv_str)        
@@ -106,7 +144,6 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
         confirmed_code_dl = []
         
         unused_code_csv_path = get__store_unused_codes_csv_path(code_req_d['store_name'])
-#         print(unused_code_csv_path)#```````````````````````````````````````````````````````````````````````````````````````````````
         
         # return empty if code csv does not exist
         if not fsu.is_file(unused_code_csv_path):
@@ -120,7 +157,6 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
         row_num = 0
         while(len(confirmed_code_dl) < quantity and row_num < len(row_dl)):
             row_d = row_dl[row_num]
-            print("(row_d['adv_value']) == float(value): ", (row_d['adv_value']) == float(value), row_d['adv_value'], float(value) )#````````````````````````````````````````
             if float(row_d['adv_value']) == float(value):
                 
                 code_d = build_code_d(row_d)
@@ -133,7 +169,7 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
 
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    real_value = 51 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    real_value = 50 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print('using ', real_value, ' as test #, should check code for real, PUT BACK' )#`````````````````````````````````````````
 
 #                     print(real_value)
@@ -150,9 +186,6 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
                 # if code not old, or if you just checked and confirmed the code
                 confirmed_code_dl.append(code_d)
             row_num += 1
-            
-#         print(confirmed_code_dl)
-#         print(len(confirmed_code_dl))
                 
         return confirmed_code_dl, len(confirmed_code_dl) == quantity
 
@@ -168,58 +201,27 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
         value_quantity_tl = code_req_d['value_quantity_tl']
         
         confirmed_code_type_d[store_name] = {}
-        
-        
-        print('checking codes for ', store_name)#`````````````````````````````````````````````````````````````````````
-        
+                
         for vq_t in value_quantity_tl:
             value    = vq_t[VALUE_INDEX]
             quantity = vq_t[QUANTITY_INDEX]
             
             confirmed_code_type_d[store_name][value] = {}
             
-            print('about to get cc_dl for ', store_name, value, quantity)#````````````````````````````````````````````````````````````
+#             print('about to get cc_dl for ', store_name, value, quantity)#````````````````````````````````````````````````````````````
             
-            confirmed_code_dl, cur_is_complete = get_confirmed_code_dl(store_name, value, quantity)
+            confirmed_code_dl, cur_is_complete = get_confirmed_code_dl__and_is_complete(store_name, value, quantity)
             
             confirmed_code_type_d[store_name][value]['code_dl'] = confirmed_code_dl
             confirmed_code_type_d[store_name][value]['is_complete'] = cur_is_complete
             
             if not cur_is_complete:
                 is_complete = False
-            
-            
-            print('confirmed_code_dl: ', confirmed_code_dl)#`````````````````````````````````````````````````````````````````````````````
-        
+                    
     return confirmed_code_type_d, is_complete
     
     
-    
-#     while(len(code_req_dl) > 0):
-#         
-#         code_req_d = code_req_dl[0]
-#         
-#         print('\nstarting new code_req_d: ', code_req_d, '\n')#``````````````````````````````````````````````````````````````````````````
-#         
-#         confirmed_code_dl = get_confirmed_code_dl(code_req_d['store_name'], code_req_d['value'], code_req_d['quantity'])
-#         
-#         confirmed_code_type_d.append({'store_name' : code_req_d['store_name'],
-#                                        'value'      : code_req_d['value'],
-#                                        'code_dl'    : confirmed_code_dl})
-#         print(confirmed_code_dl)#``````````````````````````````````````````````````````````````````````````````````````````````
-#         code_req_dl.pop(0)
-#         
-#         # if there is another code_req_d with the same store_name, move it to the front of the list so while you are confirming
-#         # codes manually, you will do all codes for the same store at once
-#         # would be more efficient to sort at beginning but this make it easier to put in bonus later
-#         for cur_code_req_d in code_req_dl:
-#             if cur_code_req_d['store_name'] == code_req_d['store_name']:
-#                 code_req_dl.insert(0, code_req_dl.pop(code_req_dl.index(cur_code_req_d)))
-#         
-#         
-#         
-#         
-#     return confirmed_code_type_d , 'EMPTY_DO_IS_COM:PLETE_LATER'
+
         
 
 
@@ -227,22 +229,10 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
     
 
 def main():
-    
-#     code_req_dl = [{'store_name' : 'jimmy_johns',
-#                     'value'      : 25,
-#                     'quantity'   : 2},
-#                    
-#                    {'store_name' : 'jets_pizza',
-#                     'value'      : 25,
-#                     'quantity'   : 2},
-#                    
-#                    {'store_name' : 'jimmy_johns',
-#                     'value'      : 50,
-#                     'quantity'   : 1}
-#                    ]
+
     
     code_req_dl = [{'store_name' : 'jimmy_johns',
-                    'value_quantity_tl' : [(25,2), (50,1)] },
+                    'value_quantity_tl' : [(25,2), (500,1)] },
                      
                    {'store_name' : 'jets_pizza',
                     'value_quantity_tl' : [(25,1)]}
