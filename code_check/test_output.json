@@ -5,19 +5,25 @@
             "code_dl": [
                 {
                     "pin": "728",
-                    "main_code": "6.05E+1",
-                    "biz_id": "66276"
+                    "biz_id": "66276",
+                    "main_code": "6050110010041437205"
                 },
                 {
-                    "pin": "728",
-                    "main_code": "6.05E+1",
-                    "biz_id": "66276"
+                    "pin": "543",
+                    "biz_id": "66276",
+                    "main_code": "605011001004143643"
                 }
             ]
         },
         "50": {
-            "is_complete": false,
-            "code_dl": []
+            "is_complete": true,
+            "code_dl": [
+                {
+                    "pin": "755",
+                    "biz_id": "66276",
+                    "main_code": "6050110010041439163"
+                }
+            ]
         }
     }
 }

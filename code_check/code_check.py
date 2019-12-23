@@ -24,7 +24,7 @@ import project_vars as pv
 VALUE_INDEX    = 0
 QUANTITY_INDEX = 1
 
-MAX_CONFIRMED_CODE_AGE_DAYS = 0 # days
+MAX_CONFIRMED_CODE_AGE_DAYS = 100 # days
 
 # TEMPORARY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 STORE_D = {'skyzone'         : Skyzone.Skyzone(),
@@ -119,7 +119,8 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
 #         for row_d in row_dl:
         row_num = 0
         while(len(confirmed_code_dl) < quantity and row_num < len(row_dl)):
-            row_d = row_dl[0]
+            row_d = row_dl[row_num]
+            print("(row_d['adv_value']) == float(value): ", (row_d['adv_value']) == float(value), row_d['adv_value'], float(value) )#````````````````````````````````````````
             if float(row_d['adv_value']) == float(value):
                 
                 code_d = build_code_d(row_d)
@@ -132,7 +133,7 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
 
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    real_value = 50 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    real_value = 51 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print('using ', real_value, ' as test #, should check code for real, PUT BACK' )#`````````````````````````````````````````
 
 #                     print(real_value)
