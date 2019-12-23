@@ -31,7 +31,7 @@ def read(json_file_path):
         try:
             data = json.load(read_file)
         except(json.decoder.JSONDecodeError):
-            raise Json_File_Empty_Exception("ERROR:  Json file exsits but is empty, maybe make a fix for this later: ", json_file_path)
+            raise Json_File_Empty_Exception("ERROR:  Json file exists but is empty, maybe make a fix for this later: ", json_file_path)
     return data
     
     

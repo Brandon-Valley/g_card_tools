@@ -192,7 +192,10 @@ def make_new_blank_store_template(kwargs, box_coords, test_mode):
     # after getting the box coords from the color_template_img, replace all color boxes with background color to make
     # blank template that will be used to make blank store templates
     def make_new_blank_template(template_type):
-        img = pu.open_img(normalized_color_template_img_path)
+        try:
+            img = pu.open_img(normalized_color_template_img_path)
+        except (FileNotFoundError):
+            raise Exception("ERROR:  Probably deleted normalized img without updating box coords, just run in test mode to fix")
         box_color_l = TEMPLATE_COLORS_DD[template_type].values()
 
         # now that all the boxes should be all 1 color and match the defined box_colors, replace all color boxes with
@@ -405,6 +408,7 @@ def main():
     
     code_card_img = make_code_card(kwargs, TEST_MODE)
     code_card_img.show()
+    code_card_img.save(TEMPLATE_DIMS_DIR_PATH + '\\test.png')
 #     code_card_img.save(pv.CODE_CARDS_DIR_PATH + '\\blank_store_template__'       + store_name    + '.png')
      
      

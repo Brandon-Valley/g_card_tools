@@ -103,7 +103,7 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         confirmed_code_dl = []
         
         unused_code_csv_path = get__store_unused_codes_csv_path(code_req_d['store_name'])
-        print(unused_code_csv_path)#```````````````````````````````````````````````````````````````````````````````````````````````
+#         print(unused_code_csv_path)#```````````````````````````````````````````````````````````````````````````````````````````````
         
         # return empty if code csv does not exist
         if not fsu.is_file(unused_code_csv_path):
@@ -121,7 +121,6 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                 
                 code_d = build_code_d(row_d)
                 
-#                 print(row_d['last_confirmed'])#````````````````````````````````````````````````````````````````````````````````````
                 last_confirm_datetime = get_datetime_from_dt_csv_str(row_d['last_confirmed'])
                 datetime_since_last_confirm = datetime.now() - last_confirm_datetime
                 sec_since_last_confirm = datetime_since_last_confirm.total_seconds()
@@ -130,16 +129,15 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
                 if sec_since_last_confirm > MAX_CONFIRMED_CODE_AGE_DAYS * 3600:
 
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    real_value = 25 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    real_value = 50 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print('using ', real_value, ' as test #, should check code for real, PUT BACK' )#`````````````````````````````````````````
 
-                    print(real_value)
+#                     print(real_value)
                     
                     # if after checking, the real value is less than the  value, 
                     # remove the code from unused_codes and put it in failed_codes
                     if real_value < float(row_d['adv_value']):
                         logger.removeRowByHeaderVal('og_code_str', row_d['og_code_str'], unused_code_csv_path, errorIfHeaderNotExist = True)
-#                         print(row_d)#```````````````````````````````````````````````````````````````````````````````````````````````````````````
                         
                         failed_codes_csv_path = get__store_failed_codes_csv_path(store_name)
                         logger.logList(row_dl, failed_codes_csv_path, wantBackup = True, headerList = header_l, overwriteAction = 'append')
@@ -155,17 +153,23 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         return confirmed_code_dl
 
 
+
+
     confirmed_code_type_dl = []
     
     while(len(code_req_dl) > 0):
+        
         code_req_d = code_req_dl[0]
+        
+        print('\nstarting new code_req_d: ', code_req_d, '\n')#``````````````````````````````````````````````````````````````````````````
+        
         confirmed_code_dl = get_confirmed_code_dl(code_req_d['store_name'], code_req_d['value'], code_req_d['quantity'])
         
-        confirmed_code_dl.append({'store_name' : code_req_d['store_name'],
+        confirmed_code_type_dl.append({'store_name' : code_req_d['store_name'],
                                   'value'      : code_req_d['value'],
                                   'code_dl'    : confirmed_code_dl})
         print(confirmed_code_dl)#``````````````````````````````````````````````````````````````````````````````````````````````
-        code_req_dl.pop()
+        code_req_dl.pop(0)
         
         # if there is another code_req_d with the same store_name, move it to the front of the list so while you are confirming
         # codes manually, you will do all codes for the same store at once
@@ -177,7 +181,7 @@ def get_confirmed_code_type_dl__and_is_complete(code_req_dl):
         
         
         
-    return confirmed_code_dl , 'EMPTY_DO_IS_COM:PLETE_LATER'
+    return confirmed_code_type_dl , 'EMPTY_DO_IS_COM:PLETE_LATER'
         
 
 
@@ -194,10 +198,23 @@ def main():
                     'value'      : 25,
                     'quantity'   : 2},
                    
-                   {'store_name' : 'jets_pizza',
+                   {'store_name' : 'jimmy_johns',
                     'value'      : 50,
                     'quantity'   : 1}
                    ]
+    
+#     code_req_dl = [{'store_name' : 'jimmy_johns',
+#                     'value'      : 25,
+#                     'quantity'   : 2},
+#                    
+#                    {'store_name' : 'jets_pizza',
+#                     'value'      : 25,
+#                     'quantity'   : 2},
+#                    
+#                    {'store_name' : 'jimmy_johns',
+#                     'value'      : 50,
+#                     'quantity'   : 1}
+#                    ]
     
     
     print(fsu.is_file(get__store_unused_codes_csv_path('jimmy_johns')))#````````````````````````````````````````````````````````````
@@ -206,6 +223,11 @@ def main():
     
     confirmed_code_type_dl, is_complete = get_confirmed_code_type_dl__and_is_complete(code_req_dl)
     print('confirmed_code_type_dl: ', confirmed_code_type_dl)###########``````````````````````````````````````````````````````````````````````````
+    
+    import json_logger
+    json_logger.write(confirmed_code_type_dl, 'test_output.json')
+
+    
     print('is_complete: ', is_complete)#```````````````````````````````````````````````````````````````````````````````````````````````````
      
     

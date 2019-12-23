@@ -1,0 +1,35 @@
+[
+    {
+        "code_dl": [
+            {
+                "main_code": "6.05E+1",
+                "biz_id": "66276",
+                "pin": "728"
+            },
+            {
+                "main_code": "6.05E+1",
+                "biz_id": "66276",
+                "pin": "728"
+            }
+        ],
+        "store_name": "jimmy_johns",
+        "value": 25
+    },
+    {
+        "code_dl": [],
+        "store_name": "jimmy_johns",
+        "value": 50
+    },
+    {
+        "code_dl": [
+            {
+                "pin": "424"
+            },
+            {
+                "pin": "424"
+            }
+        ],
+        "store_name": "jets_pizza",
+        "value": 25
+    }
+]
