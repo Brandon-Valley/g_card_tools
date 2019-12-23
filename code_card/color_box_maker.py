@@ -1,3 +1,7 @@
+
+# to import from parent dir 
+import sys, os
+sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) 
 import pil_utils
 import project_vars as pv
 

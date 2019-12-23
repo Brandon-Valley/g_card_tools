@@ -8,11 +8,11 @@ from copy import deepcopy
 import barcode
 from barcode.writer import ImageWriter
 
-import pil_utils as pu
 
 import sys, os
 sys.path.insert(1, os.path.join(sys.path[0], '..\\..')) # to import from parent dir
 import file_system_utils as fsu
+import pil_utils as pu
 
 
 TEMP_BARCODE_PATH_NO_EXT = 'temp'

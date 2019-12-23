@@ -1,5 +1,4 @@
 import json_logger
-import pil_utils as pu
 import barcode_utils  
 
 # to import from parent dir 
@@ -8,6 +7,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..\\..'))
 # from parent dir
 import file_system_utils as fsu
 import project_vars as pv
+import pil_utils as pu
 
 # FONT_NAME = 'SourceCodePro-Semibold'
 # FONT_NAME = 'SourceCodePro-Bold'#

@@ -153,7 +153,6 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
         store = STORE_D[store_name] # will eventually be replaced with Store(store_name) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         header_l = store.csv_header_l # will eventually get this from config !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
-#         for row_d in row_dl:
         row_num = 0
         while(len(confirmed_code_dl) < quantity and row_num < len(row_dl)):
             row_d = row_dl[row_num]
@@ -171,8 +170,6 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
 #                     real_value = store.get_code_value(code_d) # put back !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     real_value = 50 # remove, just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     print('using ', real_value, ' as test #, should check code for real, PUT BACK' )#`````````````````````````````````````````
-
-#                     print(real_value)
                     
                     # if after checking, the real value is less than the  value, 
                     # remove the code from unused_codes and put it in failed_codes
