@@ -237,12 +237,6 @@ def main():
                    {'store_name' : 'jets_pizza',
                     'value_quantity_tl' : [(25,1)]}
                    ]
-#     print(code_req_dl)
-    
-    
-    print(fsu.is_file(get__store_unused_codes_csv_path('jimmy_johns')))#````````````````````````````````````````````````````````````
-#     print(logger.readCSV(get__store_unused_codes_csv_path('jimmy_johns')))
-     
     
     confirmed_code_type_d, is_complete = get_confirmed_code_type_d__and_is_complete(code_req_dl)
     print('confirmed_code_type_d: ', confirmed_code_type_d)###########``````````````````````````````````````````````````````````````````````````
