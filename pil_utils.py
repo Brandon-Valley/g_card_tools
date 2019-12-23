@@ -194,7 +194,6 @@ def make_img_from_pixel_color_grid(pixel_color_grid):
     
     for x in range(w):
         for y in range(h):
-#             print(x, y)#`````````````````````````````````````````````````````````````````````````````
             try:
                 img.putpixel((x,y), pixel_color_grid[y][x])
             except(IndexError):
@@ -437,13 +436,17 @@ def write_txt_on_img_in_box_coords(img, box_coords_tup, lines, txt_color, font_p
      
     box_w, box_h = get_box_coord_dims(box_coords_tup)
 #     print('box_h: ', box_h)#`````````````````````````````````````````````````````````````````````````
-#     print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
+    print('total_aspect_ratio: ', total_aspect_ratio)#`````````````````````````````````````````````````````````````````
      
     # get font size
-#     print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
-#     print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
+    print('box_w / total_aspect_ratio: ', box_w / total_aspect_ratio)#```````````````````````````````````````````````````
+    print('box_h / len(lines): ', box_h / len(lines))#````````````````````````````````````````````````````````````````
  
     font_h = int(min((box_w / longest_line_len) / font_aspect_ratio ,   box_h / len(lines))) 
+    
+    if font_h == 0:
+        raise Exception("ERROR:  font_h == 0, maybe trying to write something too big in too small a space?")
+    
  
     # get align offsets
     full_text_w = font_aspect_ratio * font_h * longest_line_len
