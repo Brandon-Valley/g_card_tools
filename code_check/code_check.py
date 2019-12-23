@@ -169,6 +169,9 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
         
         confirmed_code_type_d[store_name] = {}
         
+        
+        print('checking codes for ', store_name)#`````````````````````````````````````````````````````````````````````
+        
         for vq_t in value_quantity_tl:
             value    = vq_t[VALUE_INDEX]
             quantity = vq_t[QUANTITY_INDEX]
@@ -188,7 +191,7 @@ def get_confirmed_code_type_d__and_is_complete(code_req_dl):
             
             print('confirmed_code_dl: ', confirmed_code_dl)#`````````````````````````````````````````````````````````````````````````````
         
-        return confirmed_code_type_d, is_complete
+    return confirmed_code_type_d, is_complete
     
     
     
